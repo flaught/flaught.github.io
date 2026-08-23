@@ -1,0 +1,214 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Flaught — Your PR's designated skeptic.</title>
+  <meta name="description" content="Adversarial PR review for CI — point any LLM at a diff and get a skeptical second opinion independent of the code's author. Named for the devil's advocate in A Canticle for Leibowitz.">
+  <meta property="og:title" content="Flaught — Your PR's designated skeptic.">
+  <meta property="og:description" content="Adversarial PR review for CI. The reviewer is not the author.">
+  <meta property="og:image" content="https://flaught.github.io/assets/social-preview.png">
+  <meta property="og:type" content="website">
+  <meta name="twitter:card" content="summary_large_image">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%230a0c0f'/%3E%3Ctext x='16' y='23' font-family='Georgia,serif' font-size='20' font-weight='bold' fill='%23d29922' text-anchor='middle'%3EF%3C/text%3E%3C/svg%3E">
+  <style>
+    :root {
+      --bg: #0a0c0f;
+      --surface: #11151b;
+      --surface-2: #161b22;
+      --border: #1c2230;
+      --text: #e6edf3;
+      --muted: #9aa4b2;
+      --faint: #6b7280;
+      --accent: #d29922;
+      --serif: Georgia, "Times New Roman", "Iowan Old Style", serif;
+      --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      --mono: "SFMono-Regular", ui-monospace, Menlo, Consolas, monospace;
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--sans);
+      line-height: 1.65;
+      -webkit-font-smoothing: antialiased;
+      text-rendering: optimizeLegibility;
+    }
+    a { color: var(--text); text-decoration-color: var(--accent); text-underline-offset: 3px; }
+    a:hover { color: var(--accent); }
+    .wrap { max-width: 780px; margin: 0 auto; padding: 0 24px; }
+    nav { display: flex; align-items: center; justify-content: space-between; padding: 22px 0; }
+    nav .brand { font-family: var(--serif); font-weight: bold; font-size: 20px; letter-spacing: .5px; }
+    nav .brand a { text-decoration: none; }
+    nav .links { display: flex; gap: 20px; font-size: 14px; }
+    nav .links a { color: var(--muted); text-decoration: none; }
+    nav .links a:hover { color: var(--text); }
+    header.hero { padding: 64px 0 40px; border-bottom: 1px solid var(--border); }
+    h1.title { font-family: var(--serif); font-weight: bold; font-size: clamp(48px, 10vw, 88px); margin: 0 0 6px; letter-spacing: 1px; }
+    .tagline { font-size: clamp(20px, 4vw, 28px); color: var(--muted); margin: 0 0 28px; }
+    .accent-bar { width: 64px; height: 3px; background: var(--accent); margin: 0 0 28px; border: 0; }
+    .lead { font-size: 19px; color: var(--text); max-width: 64ch; }
+    .lead em { color: var(--muted); font-style: italic; }
+    .install { margin: 36px 0 8px; background: var(--surface-2); border: 1px solid var(--border); border-radius: 10px; overflow: hidden; }
+    .install .head { display: flex; align-items: center; justify-content: space-between; padding: 8px 14px; border-bottom: 1px solid var(--border); font-size: 12px; color: var(--faint); font-family: var(--mono); }
+    .install button { background: none; border: 0; color: var(--faint); cursor: pointer; font-family: var(--mono); font-size: 12px; }
+    .install button:hover { color: var(--accent); }
+    .install pre { margin: 0; padding: 16px 18px; font-family: var(--mono); font-size: 14px; overflow-x: auto; color: var(--text); }
+    .install pre .c { color: var(--faint); }
+    .hint { color: var(--faint); font-size: 14px; }
+    .hint a { color: var(--muted); }
+    section { padding: 56px 0; border-bottom: 1px solid var(--border); }
+    h2 { font-family: var(--serif); font-weight: bold; font-size: 28px; margin: 0 0 20px; }
+    h2 .num { color: var(--accent); font-size: 18px; font-family: var(--mono); margin-right: 10px; vertical-align: 2px; }
+    p { margin: 0 0 16px; }
+    /* pipeline */
+    .pipeline { display: flex; flex-wrap: wrap; gap: 10px 6px; align-items: center; margin: 8px 0 20px; font-size: 13px; }
+    .pipeline .node { background: var(--surface-2); border: 1px solid var(--border); border-radius: 999px; padding: 7px 14px; color: var(--text); }
+    .pipeline .node.first { border-color: var(--accent); color: var(--accent); }
+    .pipeline .arrow { color: var(--faint); }
+    .pipeline .gate { border-style: dashed; color: var(--muted); }
+    ul.stages { list-style: none; padding: 0; margin: 0; }
+    ul.stages li { padding: 14px 0; border-top: 1px solid var(--border); }
+    ul.stages li:last-child { border-bottom: 1px solid var(--border); }
+    ul.stages .stage-name { font-weight: 600; color: var(--text); }
+    ul.stages .stage-name .tag { font-family: var(--mono); font-size: 11px; color: var(--accent); border: 1px solid var(--accent); border-radius: 4px; padding: 1px 6px; margin-left: 8px; vertical-align: 2px; }
+    ul.stages .stage-desc { color: var(--muted); font-size: 15px; margin-top: 2px; }
+    /* demo */
+    figure { margin: 0; }
+    figure img { width: 100%; border: 1px solid var(--border); border-radius: 10px; display: block; }
+    figcaption { color: var(--faint); font-size: 14px; margin-top: 12px; font-style: italic; }
+    /* providers */
+    .providers { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; margin-top: 8px; }
+    .providers .p { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 14px 16px; }
+    .providers .p .name { font-weight: 600; }
+    .providers .p .name .default { font-family: var(--mono); font-size: 11px; color: var(--accent); border: 1px solid var(--accent); border-radius: 4px; padding: 1px 6px; margin-left: 6px; vertical-align: 2px; }
+    .providers .p .model { font-family: var(--mono); font-size: 12px; color: var(--muted); margin-top: 4px; }
+    .pairing { color: var(--muted); margin-top: 18px; }
+    /* caveat */
+    .caveat { background: var(--surface); border: 1px solid var(--border); border-left: 3px solid var(--accent); border-radius: 8px; padding: 20px 22px; }
+    .caveat .marker { color: var(--accent); font-weight: bold; }
+    .caveat p { margin: 0; color: var(--muted); }
+    footer { padding: 48px 0 64px; color: var(--faint); font-size: 14px; }
+    footer .links { display: flex; flex-wrap: wrap; gap: 18px; margin-bottom: 16px; }
+    footer .links a { color: var(--muted); text-decoration: none; }
+    footer .links a:hover { color: var(--accent); }
+    footer .lit { font-family: var(--serif); font-style: italic; color: var(--muted); }
+    @media (max-width: 560px) {
+      header.hero { padding: 40px 0 32px; }
+      section { padding: 40px 0; }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <nav>
+      <div class="brand"><a href="#">Flaught</a></div>
+      <div class="links">
+        <a href="https://github.com/flaught/core">GitHub</a>
+        <a href="https://github.com/flaught/core/tree/main/docs">Docs</a>
+        <a href="https://www.npmjs.com/package/@flaught/core">npm</a>
+      </div>
+    </nav>
+
+    <header class="hero">
+      <h1 class="title">Flaught</h1>
+      <p class="tagline">Your PR's designated skeptic.</p>
+      <hr class="accent-bar">
+      <p class="lead"><strong>The reviewer should not be the author.</strong> A model reviewing code it wrote itself tends to agree with its own choices &mdash; same blind spots, same rationalizations. Flaught decouples the two: point it at any LLM, independent of whatever wrote the code, and get a genuinely adversarial second opinion instead of an echo.</p>
+      <div class="install">
+        <div class="head"><span>bash</span><button type="button" onclick="navigator.clipboard&amp;&amp;navigator.clipboard.writeText(&quot;npm install -g @flaught/core&quot;)">copy</button></div>
+        <pre><span class="c"># install</span>
+npm install -g @flaught/core
+<span class="c"># scaffold config + prompts, then review vs main</span>
+flaught init
+flaught review --base main</pre>
+      </div>
+      <p class="hint">Runs in GitHub Actions, GitLab CI, or any shell. No API key needed for the deterministic pass (<code>flaught review --no-llm</code>); set <code>GROQ_API_KEY</code> for the full LLM pass. <a href="https://github.com/flaught/core/blob/main/docs/configuration.md#llm-providers">Provider config &rarr;</a></p>
+    </header>
+
+    <section id="pipeline">
+      <h2><span class="num">01</span>Five stages, one skeptical pass</h2>
+      <div class="pipeline">
+        <span class="node first">Config</span><span class="arrow">&rarr;</span>
+        <span class="node">Context assembly</span><span class="arrow">&rarr;</span>
+        <span class="node">Deterministic tools</span><span class="arrow">&rarr;</span>
+        <span class="node">LLM adversarial pass</span><span class="arrow">&rarr;</span>
+        <span class="node">Test inversion</span><span class="arrow">&rarr;</span>
+        <span class="node">Scope-creep detection</span>
+      </div>
+      <div class="pipeline">
+        <span class="node gate">Noise budget</span><span class="arrow">&rarr;</span>
+        <span class="node gate">Severity gate</span><span class="arrow">&rarr;</span>
+        <span class="node gate">Exit code (0 / 1 / 2)</span>
+      </div>
+      <ul class="stages">
+        <li>
+          <div class="stage-name">Context assembly</div>
+          <div class="stage-desc">Diff, changed files, and a one-hop dependency neighborhood so findings carry blast radius, not just a line number.</div>
+        </li>
+        <li>
+          <div class="stage-name">Deterministic tools <span class="tag">deterministic</span></div>
+          <div class="stage-desc">Semgrep, a linter, and a vuln scanner. Every finding is tagged <code>source_type: "deterministic"</code> so you know what came from a tool.</div>
+        </li>
+        <li>
+          <div class="stage-name">LLM adversarial pass <span class="tag">llm</span></div>
+          <div class="stage-desc">Structured skeptical review of security, architecture, scope-creep, and test quality &mdash; tagged <code>source_type: "llm"</code>, distinct from the tool findings.</div>
+        </li>
+        <li>
+          <div class="stage-name">Test inversion</div>
+          <div class="stage-desc">Runs the test suite on pre-change code and flags tests that pass on both sides &mdash; cheap mutation testing that catches vacuous tests.</div>
+        </li>
+        <li>
+          <div class="stage-name">Scope-creep detection</div>
+          <div class="stage-desc">Heuristic plus LLM; flags hunks unrelated to the PR's stated intent.</div>
+        </li>
+      </ul>
+      <p style="color:var(--muted)">Output: a Markdown PR comment plus a <strong>versioned JSON artifact</strong> you can keep &mdash; one snapshot per run, for trend tracking.</p>
+    </section>
+
+    <section id="demo">
+      <h2><span class="num">02</span>See it work</h2>
+      <figure>
+        <img src="assets/flaught-demo.gif" alt="Animated terminal recording: flaught review runs against main on a deliberately flawed pull request and reports findings, then a peek at the JSON artifact.">
+        <figcaption>A deliberately flawed PR reviewed against <code>main</code>: a string-interpolated SQL query (critical, LLM-asserted), a scope-creep hunk in an unrelated file, and a vacuous test that passes on both sides of the change &mdash; caught by test inversion.</figcaption>
+      </figure>
+    </section>
+
+    <section id="providers">
+      <h2><span class="num">03</span>Review with a different model than the one that wrote the code</h2>
+      <p>Self-review is the weak spot in AI-assisted development. The model that wrote your PR is primed to defend it. Flaught breaks that correlation &mdash; swap reviewers with zero code change, just update <code>.advreview.yml</code>.</p>
+      <div class="providers">
+        <div class="p"><div class="name">Groq <span class="default">default</span></div><div class="model">groq/compound-mini</div></div>
+        <div class="p"><div class="name">OpenAI</div><div class="model">gpt-4o</div></div>
+        <div class="p"><div class="name">Gemini</div><div class="model">gemini-1.5-pro</div></div>
+        <div class="p"><div class="name">Anthropic</div><div class="model">claude-sonnet-5</div></div>
+        <div class="p"><div class="name">Ollama</div><div class="model">local + cloud</div></div>
+      </div>
+      <p class="pairing">A sane pairing: code with Claude, review with GPT-4o or Groq. Code with Copilot or GPT, review with Claude. Code with anything, review with a different anything. Any OpenAI-compatible endpoint works via <code>base_url</code>; Anthropic has its own native adapter since its Messages API isn't OpenAI-shaped.</p>
+    </section>
+
+    <section id="caveat">
+      <h2><span class="num">04</span>The honest caveat</h2>
+      <div class="caveat">
+        <p><span class="marker">&#9888;</span> The JSON artifact is evidence that <em>scrutiny occurred</em>, not evidence that findings are <em>correct</em>. LLM-asserted findings may include hallucinations. Deterministic-tool findings have their own false-positive rates. Treat this as a prompt for human review, not audit-truth.</p>
+      </div>
+      <p style="color:var(--faint);margin-top:16px">Named for Monsignor Flaught, the devil's advocate in <em>A Canticle for Leibowitz</em>.</p>
+    </section>
+
+    <footer>
+      <div class="links">
+        <a href="https://github.com/flaught/core">GitHub repo</a>
+        <a href="https://github.com/flaught/core/tree/main/docs">Docs</a>
+        <a href="https://github.com/flaught/core/blob/main/docs/configuration.md">Configuration</a>
+        <a href="https://github.com/flaught/core/blob/main/docs/prompt-templates.md">Prompt templates</a>
+        <a href="https://github.com/flaught/core/blob/main/docs/findings-schema.md">Findings schema</a>
+        <a href="https://github.com/flaught/core/releases/tag/v0.8.0">v0.8.0</a>
+        <a href="https://www.npmjs.com/package/@flaught/core">npm</a>
+      </div>
+      <p>MIT licensed. &middot; <span class="lit">advocatus diaboli</span></p>
+    </footer>
+  </div>
+</body>
+</html>
