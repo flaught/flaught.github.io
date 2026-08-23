@@ -89,7 +89,7 @@
     /* compare */
     .compare-lead { color: var(--muted); }
     .compare-scroll { overflow-x: auto; margin: 8px 0 4px; }
-    table.compare { width: 100%; border-collapse: collapse; font-size: 14px; min-width: 620px; }
+    table.compare { width: 100%; border-collapse: collapse; font-size: 14px; min-width: 840px; }
     table.compare th, table.compare td { padding: 11px 10px; text-align: center; border-bottom: 1px solid var(--border); border-left: 1px solid var(--border); white-space: nowrap; }
     table.compare th:first-child, table.compare td:first-child { text-align: left; border-left: 0; white-space: normal; }
     table.compare thead th { font-size: 13px; color: var(--muted); font-weight: 600; }
@@ -104,6 +104,12 @@
     .compare-key span { display: inline-block; width: 18px; text-align: center; }
     .compare-key .y { color: var(--accent); font-weight: bold; }
     .compare-note { color: var(--faint); font-size: 13px; margin-top: 8px; }
+    table.compare tr.weak th { color: var(--muted); font-style: italic; }
+    table.compare sup { font-size: 10px; color: var(--accent); margin-left: 1px; vertical-align: super; }
+    table.compare td.price { font-size: 11px; font-family: var(--mono); color: var(--muted); white-space: normal; line-height: 1.3; }
+    .compare-foot { font-size: 12px; color: var(--faint); line-height: 1.55; margin: 12px 0 0; padding-left: 18px; }
+    .compare-foot li { margin-bottom: 4px; }
+    .compare-foot sup { color: var(--accent); }
 
     /* caveat */
     .caveat { background: var(--surface); border: 1px solid var(--border); border-left: 3px solid var(--accent); border-radius: 8px; padding: 20px 22px; }
@@ -210,33 +216,49 @@ flaught review --base main</pre>
 
     <section id="compare">
       <h2><span class="num">04</span>How it compares</h2>
-      <p class="compare-lead">The honest version of this chart: Flaught isn't the only open-source, bring-your-own-model reviewer &mdash; <strong>Qodo Merge / PR-Agent</strong> is too. The difference is what the review <em>does</em>. A tool that says &ldquo;here are issues&rdquo; is one thing; one that also asks &ldquo;are these issues real?&rdquo; is another.</p>
+      <p class="compare-lead">The honest version of this chart: Flaught isn't the only open-source, bring-your-own-model reviewer that runs in any CI &mdash; <strong>Open Code Review (Alibaba)</strong> and <strong>Qodo Merge / PR-Agent</strong> are too. The difference is what the review <em>does</em>. A tool that says &ldquo;here are issues&rdquo; is one thing; one that also asks &ldquo;are these issues real?&rdquo; &mdash; and whether your tests even test the change, and whether a hunk belongs in this PR &mdash; is another.</p>
       <div class="compare-scroll">
       <table class="compare">
         <thead>
           <tr>
             <th></th>
             <th class="us">Flaught</th>
+            <th>Open Code Review<span class="sub">Alibaba · OCR</span></th>
             <th>CodeRabbit</th>
             <th>Qodo&nbsp;Merge<span class="sub">PR-Agent</span></th>
+            <th>Greptile</th>
             <th>Copilot<span class="sub">code review</span></th>
           </tr>
         </thead>
         <tbody>
-          <tr><th>Open source, self-hostable</th><td class="y">✓</td><td class="n">✗</td><td class="y">✓</td><td class="n">✗</td></tr>
-          <tr><th>Bring-your-own LLM (incl. local)</th><td class="y">✓</td><td class="n">✗</td><td class="y">✓</td><td class="n">✗</td></tr>
-          <tr><th>Deterministic + LLM findings, provenance-tagged</th><td class="y">✓</td><td class="p">~</td><td class="p">~</td><td class="n">✗</td></tr>
-          <tr><th>Adversarial refute / skeptic pass</th><td class="y">✓</td><td class="n">✗</td><td class="n">✗</td><td class="n">✗</td></tr>
-          <tr><th>Test inversion (vacuous-test detection)</th><td class="y">✓</td><td class="n">✗</td><td class="n">✗</td><td class="n">✗</td></tr>
-          <tr><th>Scope-creep detection</th><td class="y">✓</td><td class="n">✗</td><td class="n">✗</td><td class="n">✗</td></tr>
-          <tr><th>Versioned JSON artifact + trends</th><td class="y">✓</td><td class="p">~</td><td class="n">✗</td><td class="n">✗</td></tr>
-          <tr><th>CI exit codes (tool fault &ne; code problem)</th><td class="y">✓</td><td class="na">—<span class="key">SaaS comment</span></td><td class="p">~</td><td class="na">—</td></tr>
-          <tr><th>Runs in any CI (GitHub Actions / GitLab / shell)</th><td class="y">✓</td><td class="p">~</td><td class="y">✓</td><td class="p">~</td></tr>
+          <tr><th>Open source, self-hostable</th><td class="y">✓</td><td class="y">✓</td><td class="n">✗</td><td class="y">✓</td><td class="n">✗</td><td class="n">✗</td></tr>
+          <tr><th>Bring-your-own LLM (incl. local)</th><td class="y">✓</td><td class="y">✓</td><td class="n">✗</td><td class="y">✓</td><td class="n">✗</td><td class="n">✗</td></tr>
+          <tr><th>Runs in any CI / shell</th><td class="y">✓</td><td class="y">✓</td><td class="p">~</td><td class="y">✓</td><td class="p">~</td><td class="p">~</td></tr>
+          <tr><th>Pricing / free for OSS</th><td class="price">Free (OSS)</td><td class="price">Free (OSS)</td><td class="price">Free OSS · ~$24/dev</td><td class="price">Free self-host · ~$19/dev</td><td class="price">Free OSS · $30/seat</td><td class="price">Free tier · $10–39/dev</td></tr>
+          <tr><th>Deterministic tools + LLM, provenance-tagged</th><td class="y">✓</td><td class="p">~<sup>1</sup></td><td class="p">~<sup>2</sup></td><td class="p">~<sup>3</sup></td><td class="n">✗</td><td class="n">✗</td></tr>
+          <tr><th>Adversarial refute / skeptic pass (cross-model)</th><td class="y">✓</td><td class="p">~<sup>4</sup></td><td class="n">✗</td><td class="n">✗</td><td class="n">✗</td><td class="n">✗</td></tr>
+          <tr><th>Test inversion (vacuous-test detection)</th><td class="y">✓</td><td class="n">✗</td><td class="n">✗</td><td class="n">✗<sup>5</sup></td><td class="n">✗</td><td class="n">✗</td></tr>
+          <tr><th>Scope-creep detection</th><td class="y">✓</td><td class="n">✗</td><td class="n">✗</td><td class="n">✗</td><td class="n">✗</td><td class="n">✗</td></tr>
+          <tr><th>Versioned JSON artifact + trends</th><td class="y">✓</td><td class="p">~<sup>6</sup></td><td class="p">~</td><td class="n">✗</td><td class="p">~</td><td class="n">✗</td></tr>
+          <tr><th>CI exit codes (tool fault &ne; code problem)</th><td class="y">✓</td><td class="p">~</td><td class="p">~</td><td class="p">~</td><td class="n">✗</td><td class="n">✗</td></tr>
+          <tr class="weak"><th>Published, validated benchmark</th><td class="n">✗<sup>8</sup></td><td class="y">✓</td><td class="y">✓</td><td class="y">✓</td><td class="y">✓</td><td class="p">~</td></tr>
+          <tr class="weak"><th>Whole-repo semantic index / cross-file context</th><td class="p">~<sup>7</sup></td><td class="y">✓</td><td class="p">~</td><td class="p">~</td><td class="y">✓</td><td class="p">~</td></tr>
+          <tr class="weak"><th>Auto-implements the fix (not just comments)</th><td class="n">✗<sup>8</sup></td><td class="p">~</td><td class="p">~</td><td class="p">~</td><td class="p">~</td><td class="y">✓</td></tr>
         </tbody>
       </table>
       </div>
-      <p class="compare-key"><span class="y">✓</span> yes &nbsp; <span class="p">~</span> partial / varies &nbsp; <span class="n">✗</span> not a named feature &nbsp; <span class="na">—</span> n/a</p>
-      <p class="compare-note">Semgrep isn't a column here &mdash; Flaught <em>runs</em> it (alongside a linter and a vuln scanner) as one of its deterministic stages, so it's a building block, not a rival. The columns above are AI code-review products. Best-effort, as of August 2026 &mdash; a snapshot, not a verdict; tools move fast, so if a cell is wrong, <a href="https://github.com/flaught/core/issues/new?labels=documentation">file an issue</a> and we'll correct it. The cells Flaught loses on (polished hosted UX, deep GitHub/GitLab app integration, an IDE assistant) are real; the cells it wins on are the ones above.</p>
+      <p class="compare-key"><span class="y">✓</span> yes &nbsp; <span class="p">~</span> partial / varies &nbsp; <span class="n">✗</span> not a named feature &nbsp; <span class="price" style="font-family:var(--mono);font-size:11px">text</span> = pricing</p>
+      <p class="compare-note">Semgrep isn't a column &mdash; Flaught <em>runs</em> it (plus a linter and a vuln scanner) as a deterministic stage, so it's a building block, not a rival; the columns are AI code-review products. Best-effort, as of August 2026 &mdash; a snapshot, not a verdict. Tools move fast; if a cell is wrong, <a href="https://github.com/flaught/core/issues/new?labels=documentation">file an issue</a> and we'll fix it. The italic rows are where Flaught is behind, and they're <em>roadmap</em>, not a verdict on the design (see note 8).</p>
+      <ol class="compare-foot">
+        <li><sup>1</sup> OCR is a deterministic-<em>engineering</em> + agent hybrid; its deterministic layer is file selection, line positioning, and rule routing &mdash; not external tools (Semgrep/linter/vuln) with per-finding source tags.</li>
+        <li><sup>2</sup> CodeRabbit runs 40+ linters + SAST + LLM, but doesn't tag each finding's provenance.</li>
+        <li><sup>3</sup> Qodo is multi-agent + SAST, not provenance-tagged per finding.</li>
+        <li><sup>4</sup> OCR has a reflection module (same-pipeline self-check) &mdash; similar spirit, but not a <em>different model</em> refuting findings with anti-correlation.</li>
+        <li><sup>5</sup> Qodo auto-generates missing tests; that's distinct from detecting vacuous tests that pass on both sides of the change.</li>
+        <li><sup>6</sup> OCR has a Session Viewer + OpenTelemetry; CodeRabbit/Greptile have insights dashboards &mdash; not a versioned <em>findings</em> artifact you trend across runs.</li>
+        <li><sup>7</sup> Flaught reads a one-hop dependency neighborhood (blast radius), not a whole-repo semantic graph &mdash; cheaper, and less cross-file recall.</li>
+        <li><sup>8</sup> Flaught is a dogfooding open-source project; a published benchmark, a whole-repo semantic index, and auto-implementing fixes are on an evolving roadmap &mdash; these are &ldquo;not yet,&rdquo; not &ldquo;never.&rdquo;</li>
+      </ol>
     </section>
 
     <section id="caveat">
