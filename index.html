@@ -83,6 +83,12 @@
     .providers .p .name .default { font-family: var(--mono); font-size: 11px; color: var(--accent); border: 1px solid var(--accent); border-radius: 4px; padding: 1px 6px; margin-left: 6px; vertical-align: 2px; }
     .providers .p .model { font-family: var(--mono); font-size: 12px; color: var(--muted); margin-top: 4px; }
     .pairing { color: var(--muted); margin-top: 18px; }
+    /* extend */
+    .extend { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; margin-top: 8px; }
+    .extend .x { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 14px 16px; }
+    .extend .x .x-name { font-weight: 600; }
+    .extend .x .x-tag { font-family: var(--mono); font-size: 12px; color: var(--muted); margin-top: 4px; }
+    .extend .x .x-desc { color: var(--muted); font-size: 14px; margin-top: 8px; }
     /* compare */
     .compare-lead { color: var(--muted); }
     table.compare { width: 100%; border-collapse: collapse; font-size: 14px; }
@@ -280,8 +286,19 @@ flaught review --base main</pre>
       <p class="pairing">A sane pairing: code with Claude, review with Groq or GPT-4o. Code with anything, review with a different anything. Any OpenAI-compatible endpoint works via <code>base_url</code>; Anthropic has its own native adapter too, best paired as the coder here, not the reviewer.</p>
     </section>
 
+    <section id="extend">
+      <h2><span class="num">04</span>Extend it without forking it</h2>
+      <p>The defaults are a starting point. Three surfaces let you reshape the review without touching Flaught's source: the prompt, the config, and the library API.</p>
+      <div class="extend">
+        <div class="x"><div class="x-name">Prompt</div><div class="x-tag">.flaught-prompt/</div><div class="x-desc">Override any section (categories, severities, posture) or append team-specific rules on top of the defaults.</div></div>
+        <div class="x"><div class="x-name">Config</div><div class="x-tag">.advreview.yml</div><div class="x-desc">Swap the linter, vuln scanner, or Semgrep ruleset; tune the noise budget and severity gate per project.</div></div>
+        <div class="x"><div class="x-name">Library</div><div class="x-tag">runReview()</div><div class="x-desc">Call Flaught from Node for a custom dashboard or a CI system that isn't GitHub Actions.</div></div>
+      </div>
+      <p class="hint">Full guides: <a href="https://github.com/flaught/core/blob/main/docs/prompt-templates.md">prompt templates</a>, <a href="https://github.com/flaught/core/blob/main/docs/configuration.md">configuration</a>, <a href="https://github.com/flaught/core/blob/main/docs/api.md">programmatic API</a>.</p>
+    </section>
+
     <section id="compare">
-      <h2><span class="num">04</span>How it compares</h2>
+      <h2><span class="num">05</span>How it compares</h2>
       <p class="compare-lead">Against the SaaS market leader and the closest open-source structural analog. The difference is what the review <em>does</em>: a tool that says &ldquo;here are issues&rdquo; is one thing; one that also asks &ldquo;are these issues real?&rdquo; (and whether your tests even test the change, and whether a hunk belongs in this PR) is another.</p>
       <table class="compare">
         <thead>
@@ -310,7 +327,7 @@ flaught review --base main</pre>
     </section>
 
     <section id="caveat">
-      <h2><span class="num">05</span>The honest caveat</h2>
+      <h2><span class="num">06</span>The honest caveat</h2>
       <div class="caveat">
         <p><span class="marker">&#9888;</span> The JSON artifact is evidence that <em>scrutiny occurred</em>, not evidence that findings are <em>correct</em>. LLM-asserted findings may include hallucinations. Deterministic-tool findings have their own false-positive rates. Treat this as a prompt for human review, not audit-truth.</p>
       </div>
@@ -323,6 +340,7 @@ flaught review --base main</pre>
         <a href="https://github.com/flaught/core/tree/main/docs">Docs</a>
         <a href="https://github.com/flaught/core/blob/main/docs/configuration.md">Configuration</a>
         <a href="https://github.com/flaught/core/blob/main/docs/prompt-templates.md">Prompt templates</a>
+        <a href="https://github.com/flaught/core/blob/main/docs/api.md">API</a>
         <a href="https://github.com/flaught/core/blob/main/docs/findings-schema.md">Findings schema</a>
         <a href="https://github.com/flaught/core/releases/tag/v0.8.0">v0.8.0</a>
         <a href="https://www.npmjs.com/package/@flaught/core">npm</a>
