@@ -86,6 +86,25 @@
     .providers .p .name .default { font-family: var(--mono); font-size: 11px; color: var(--accent); border: 1px solid var(--accent); border-radius: 4px; padding: 1px 6px; margin-left: 6px; vertical-align: 2px; }
     .providers .p .model { font-family: var(--mono); font-size: 12px; color: var(--muted); margin-top: 4px; }
     .pairing { color: var(--muted); margin-top: 18px; }
+    /* compare */
+    .compare-lead { color: var(--muted); }
+    .compare-scroll { overflow-x: auto; margin: 8px 0 4px; }
+    table.compare { width: 100%; border-collapse: collapse; font-size: 14px; min-width: 620px; }
+    table.compare th, table.compare td { padding: 11px 10px; text-align: center; border-bottom: 1px solid var(--border); border-left: 1px solid var(--border); white-space: nowrap; }
+    table.compare th:first-child, table.compare td:first-child { text-align: left; border-left: 0; white-space: normal; }
+    table.compare thead th { font-size: 13px; color: var(--muted); font-weight: 600; }
+    table.compare thead th.us { color: var(--accent); }
+    table.compare thead th .sub { display: block; font-weight: 400; color: var(--faint); font-size: 11px; }
+    table.compare tbody th { font-weight: 500; color: var(--text); }
+    table.compare td.y { color: var(--accent); font-weight: bold; }
+    table.compare td.p { color: var(--muted); }
+    table.compare td.n, table.compare td.na { color: var(--faint); }
+    table.compare td .key { display: block; font-size: 10px; color: var(--faint); font-weight: 400; }
+    .compare-key { font-size: 13px; color: var(--muted); margin-top: 12px; }
+    .compare-key span { display: inline-block; width: 18px; text-align: center; }
+    .compare-key .y { color: var(--accent); font-weight: bold; }
+    .compare-note { color: var(--faint); font-size: 13px; margin-top: 8px; }
+
     /* caveat */
     .caveat { background: var(--surface); border: 1px solid var(--border); border-left: 3px solid var(--accent); border-radius: 8px; padding: 20px 22px; }
     .caveat .marker { color: var(--accent); font-weight: bold; }
@@ -189,8 +208,40 @@ flaught review --base main</pre>
       <p class="pairing">A sane pairing: code with Claude, review with GPT-4o or Groq. Code with Copilot or GPT, review with Claude. Code with anything, review with a different anything. Any OpenAI-compatible endpoint works via <code>base_url</code>; Anthropic has its own native adapter since its Messages API isn't OpenAI-shaped.</p>
     </section>
 
+    <section id="compare">
+      <h2><span class="num">04</span>How it compares</h2>
+      <p class="compare-lead">The honest version of this chart: Flaught isn't the only open-source, bring-your-own-model reviewer &mdash; <strong>Qodo Merge / PR-Agent</strong> is too. The difference is what the review <em>does</em>. A tool that says &ldquo;here are issues&rdquo; is one thing; one that also asks &ldquo;are these issues real?&rdquo; is another.</p>
+      <div class="compare-scroll">
+      <table class="compare">
+        <thead>
+          <tr>
+            <th></th>
+            <th class="us">Flaught</th>
+            <th>CodeRabbit</th>
+            <th>Qodo&nbsp;Merge<span class="sub">PR-Agent</span></th>
+            <th>Semgrep</th>
+            <th>Copilot<span class="sub">code review</span></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><th>Open source, self-hostable</th><td class="y">✓</td><td class="n">✗</td><td class="y">✓</td><td class="y">✓</td><td class="n">✗</td></tr>
+          <tr><th>Bring-your-own LLM (incl. local)</th><td class="y">✓</td><td class="n">✗</td><td class="y">✓</td><td class="na">—<span class="key">no LLM</span></td><td class="n">✗</td></tr>
+          <tr><th>Deterministic + LLM findings, provenance-tagged</th><td class="y">✓</td><td class="p">~</td><td class="p">~</td><td class="n">✗</td><td class="n">✗</td></tr>
+          <tr><th>Adversarial refute / skeptic pass</th><td class="y">✓</td><td class="n">✗</td><td class="n">✗</td><td class="n">✗</td><td class="n">✗</td></tr>
+          <tr><th>Test inversion (vacuous-test detection)</th><td class="y">✓</td><td class="n">✗</td><td class="n">✗</td><td class="n">✗</td><td class="n">✗</td></tr>
+          <tr><th>Scope-creep detection</th><td class="y">✓</td><td class="n">✗</td><td class="n">✗</td><td class="n">✗</td><td class="n">✗</td></tr>
+          <tr><th>Versioned JSON artifact + trends</th><td class="y">✓</td><td class="p">~</td><td class="n">✗</td><td class="p">~</td><td class="n">✗</td></tr>
+          <tr><th>CI exit codes (tool fault &ne; code problem)</th><td class="y">✓</td><td class="na">—<span class="key">SaaS comment</span></td><td class="p">~</td><td class="y">✓</td><td class="na">—</td></tr>
+          <tr><th>Runs in any CI (GitHub Actions / GitLab / shell)</th><td class="y">✓</td><td class="p">~</td><td class="y">✓</td><td class="y">✓</td><td class="p">~</td></tr>
+        </tbody>
+      </table>
+      </div>
+      <p class="compare-key"><span class="y">✓</span> yes &nbsp; <span class="p">~</span> partial / varies &nbsp; <span class="n">✗</span> not a named feature &nbsp; <span class="na">—</span> n/a</p>
+      <p class="compare-note">Best-effort, as of August 2026 &mdash; a snapshot, not a verdict. These tools move fast; if a cell is wrong, <a href="https://github.com/flaught/core/issues/new?labels=documentation">file an issue</a> and we'll correct it. The cells Flaught loses on (polished hosted UX, deep GitHub/GitLab app integration, an IDE assistant) are real; the cells it wins on are the ones above.</p>
+    </section>
+
     <section id="caveat">
-      <h2><span class="num">04</span>The honest caveat</h2>
+      <h2><span class="num">05</span>The honest caveat</h2>
       <div class="caveat">
         <p><span class="marker">&#9888;</span> The JSON artifact is evidence that <em>scrutiny occurred</em>, not evidence that findings are <em>correct</em>. LLM-asserted findings may include hallucinations. Deterministic-tool findings have their own false-positive rates. Treat this as a prompt for human review, not audit-truth.</p>
       </div>
