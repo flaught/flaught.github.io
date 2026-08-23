@@ -219,25 +219,24 @@ flaught review --base main</pre>
             <th class="us">Flaught</th>
             <th>CodeRabbit</th>
             <th>Qodo&nbsp;Merge<span class="sub">PR-Agent</span></th>
-            <th>Semgrep</th>
             <th>Copilot<span class="sub">code review</span></th>
           </tr>
         </thead>
         <tbody>
-          <tr><th>Open source, self-hostable</th><td class="y">✓</td><td class="n">✗</td><td class="y">✓</td><td class="y">✓</td><td class="n">✗</td></tr>
-          <tr><th>Bring-your-own LLM (incl. local)</th><td class="y">✓</td><td class="n">✗</td><td class="y">✓</td><td class="na">—<span class="key">no LLM</span></td><td class="n">✗</td></tr>
-          <tr><th>Deterministic + LLM findings, provenance-tagged</th><td class="y">✓</td><td class="p">~</td><td class="p">~</td><td class="n">✗</td><td class="n">✗</td></tr>
-          <tr><th>Adversarial refute / skeptic pass</th><td class="y">✓</td><td class="n">✗</td><td class="n">✗</td><td class="n">✗</td><td class="n">✗</td></tr>
-          <tr><th>Test inversion (vacuous-test detection)</th><td class="y">✓</td><td class="n">✗</td><td class="n">✗</td><td class="n">✗</td><td class="n">✗</td></tr>
-          <tr><th>Scope-creep detection</th><td class="y">✓</td><td class="n">✗</td><td class="n">✗</td><td class="n">✗</td><td class="n">✗</td></tr>
-          <tr><th>Versioned JSON artifact + trends</th><td class="y">✓</td><td class="p">~</td><td class="n">✗</td><td class="p">~</td><td class="n">✗</td></tr>
-          <tr><th>CI exit codes (tool fault &ne; code problem)</th><td class="y">✓</td><td class="na">—<span class="key">SaaS comment</span></td><td class="p">~</td><td class="y">✓</td><td class="na">—</td></tr>
-          <tr><th>Runs in any CI (GitHub Actions / GitLab / shell)</th><td class="y">✓</td><td class="p">~</td><td class="y">✓</td><td class="y">✓</td><td class="p">~</td></tr>
+          <tr><th>Open source, self-hostable</th><td class="y">✓</td><td class="n">✗</td><td class="y">✓</td><td class="n">✗</td></tr>
+          <tr><th>Bring-your-own LLM (incl. local)</th><td class="y">✓</td><td class="n">✗</td><td class="y">✓</td><td class="n">✗</td></tr>
+          <tr><th>Deterministic + LLM findings, provenance-tagged</th><td class="y">✓</td><td class="p">~</td><td class="p">~</td><td class="n">✗</td></tr>
+          <tr><th>Adversarial refute / skeptic pass</th><td class="y">✓</td><td class="n">✗</td><td class="n">✗</td><td class="n">✗</td></tr>
+          <tr><th>Test inversion (vacuous-test detection)</th><td class="y">✓</td><td class="n">✗</td><td class="n">✗</td><td class="n">✗</td></tr>
+          <tr><th>Scope-creep detection</th><td class="y">✓</td><td class="n">✗</td><td class="n">✗</td><td class="n">✗</td></tr>
+          <tr><th>Versioned JSON artifact + trends</th><td class="y">✓</td><td class="p">~</td><td class="n">✗</td><td class="n">✗</td></tr>
+          <tr><th>CI exit codes (tool fault &ne; code problem)</th><td class="y">✓</td><td class="na">—<span class="key">SaaS comment</span></td><td class="p">~</td><td class="na">—</td></tr>
+          <tr><th>Runs in any CI (GitHub Actions / GitLab / shell)</th><td class="y">✓</td><td class="p">~</td><td class="y">✓</td><td class="p">~</td></tr>
         </tbody>
       </table>
       </div>
       <p class="compare-key"><span class="y">✓</span> yes &nbsp; <span class="p">~</span> partial / varies &nbsp; <span class="n">✗</span> not a named feature &nbsp; <span class="na">—</span> n/a</p>
-      <p class="compare-note">Best-effort, as of August 2026 &mdash; a snapshot, not a verdict. These tools move fast; if a cell is wrong, <a href="https://github.com/flaught/core/issues/new?labels=documentation">file an issue</a> and we'll correct it. The cells Flaught loses on (polished hosted UX, deep GitHub/GitLab app integration, an IDE assistant) are real; the cells it wins on are the ones above.</p>
+      <p class="compare-note">Semgrep isn't a column here &mdash; Flaught <em>runs</em> it (alongside a linter and a vuln scanner) as one of its deterministic stages, so it's a building block, not a rival. The columns above are AI code-review products. Best-effort, as of August 2026 &mdash; a snapshot, not a verdict; tools move fast, so if a cell is wrong, <a href="https://github.com/flaught/core/issues/new?labels=documentation">file an issue</a> and we'll correct it. The cells Flaught loses on (polished hosted UX, deep GitHub/GitLab app integration, an IDE assistant) are real; the cells it wins on are the ones above.</p>
     </section>
 
     <section id="caveat">
