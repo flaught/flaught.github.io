@@ -3,9 +3,9 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Flaught — Your PR's designated skeptic.</title>
-  <meta name="description" content="Adversarial PR review for CI — point any LLM at a diff and get a skeptical second opinion independent of the code's author. Named for the devil's advocate in A Canticle for Leibowitz.">
-  <meta property="og:title" content="Flaught — Your PR's designated skeptic.">
+  <title>Flaught: Your PR's designated skeptic.</title>
+  <meta name="description" content="Adversarial PR review for CI: point any LLM at a diff and get a skeptical second opinion independent of the code's author. Named for the devil's advocate in A Canticle for Leibowitz.">
+  <meta property="og:title" content="Flaught: Your PR's designated skeptic.">
   <meta property="og:description" content="Adversarial PR review for CI. The reviewer is not the author.">
   <meta property="og:image" content="https://flaught.github.io/assets/social-preview.png">
   <meta property="og:type" content="website">
@@ -63,12 +63,9 @@
     h2 { font-family: var(--serif); font-weight: bold; font-size: 28px; margin: 0 0 20px; }
     h2 .num { color: var(--accent); font-size: 18px; font-family: var(--mono); margin-right: 10px; vertical-align: 2px; }
     p { margin: 0 0 16px; }
-    /* pipeline */
-    .pipeline { display: flex; flex-wrap: wrap; gap: 10px 6px; align-items: center; margin: 8px 0 20px; font-size: 13px; }
-    .pipeline .node { background: var(--surface-2); border: 1px solid var(--border); border-radius: 999px; padding: 7px 14px; color: var(--text); }
-    .pipeline .node.first { border-color: var(--accent); color: var(--accent); }
-    .pipeline .arrow { color: var(--faint); }
-    .pipeline .gate { border-style: dashed; color: var(--muted); }
+    /* pipeline diagram */
+    .diagram { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 20px 16px 16px; margin: 8px 0 20px; }
+    .diagram svg { width: 100%; height: auto; display: block; }
     ul.stages { list-style: none; padding: 0; margin: 0; }
     ul.stages li { padding: 14px 0; border-top: 1px solid var(--border); }
     ul.stages li:last-child { border-bottom: 1px solid var(--border); }
@@ -88,25 +85,21 @@
     .pairing { color: var(--muted); margin-top: 18px; }
     /* compare */
     .compare-lead { color: var(--muted); }
-    .compare-scroll { overflow-x: auto; margin: 8px 0 4px; }
-    table.compare { width: 100%; border-collapse: collapse; font-size: 14px; min-width: 840px; }
-    table.compare th, table.compare td { padding: 11px 10px; text-align: center; border-bottom: 1px solid var(--border); border-left: 1px solid var(--border); white-space: nowrap; }
+    table.compare { width: 100%; border-collapse: collapse; font-size: 14px; }
+    table.compare th, table.compare td { padding: 11px 10px; text-align: center; border-bottom: 1px solid var(--border); border-left: 1px solid var(--border); }
     table.compare th:first-child, table.compare td:first-child { text-align: left; border-left: 0; white-space: normal; }
     table.compare thead th { font-size: 13px; color: var(--muted); font-weight: 600; }
     table.compare thead th.us { color: var(--accent); }
     table.compare thead th .sub { display: block; font-weight: 400; color: var(--faint); font-size: 11px; }
-    table.compare tbody th { font-weight: 500; color: var(--text); }
+    table.compare tbody th { font-weight: 500; color: var(--text); white-space: normal; }
     table.compare td.y { color: var(--accent); font-weight: bold; }
     table.compare td.p { color: var(--muted); }
-    table.compare td.n, table.compare td.na { color: var(--faint); }
-    table.compare td .key { display: block; font-size: 10px; color: var(--faint); font-weight: 400; }
+    table.compare td.n { color: var(--faint); }
     .compare-key { font-size: 13px; color: var(--muted); margin-top: 12px; }
     .compare-key span { display: inline-block; width: 18px; text-align: center; }
     .compare-key .y { color: var(--accent); font-weight: bold; }
     .compare-note { color: var(--faint); font-size: 13px; margin-top: 8px; }
-    table.compare tr.weak th { color: var(--muted); font-style: italic; }
     table.compare sup { font-size: 10px; color: var(--accent); margin-left: 1px; vertical-align: super; }
-    table.compare td.price { font-size: 11px; font-family: var(--mono); color: var(--muted); white-space: normal; line-height: 1.3; }
     .compare-foot { font-size: 12px; color: var(--faint); line-height: 1.55; margin: 12px 0 0; padding-left: 18px; }
     .compare-foot li { margin-bottom: 4px; }
     .compare-foot sup { color: var(--accent); }
@@ -141,7 +134,7 @@
       <h1 class="title">Flaught</h1>
       <p class="tagline">Your PR's designated skeptic.</p>
       <hr class="accent-bar">
-      <p class="lead"><strong>The reviewer should not be the author.</strong> A model reviewing code it wrote itself tends to agree with its own choices &mdash; same blind spots, same rationalizations. Flaught decouples the two: point it at any LLM, independent of whatever wrote the code, and get a genuinely adversarial second opinion instead of an echo.</p>
+      <p class="lead"><strong>The reviewer should not be the author.</strong> A model reviewing code it wrote itself tends to agree with its own choices. Same blind spots, same rationalizations. Flaught decouples the two: point it at any LLM, independent of whatever wrote the code, and get a genuinely adversarial second opinion instead of an echo.</p>
       <div class="install">
         <div class="head"><span>bash</span><button type="button" onclick="navigator.clipboard&amp;&amp;navigator.clipboard.writeText(&quot;npm install -g @flaught/core&quot;)">copy</button></div>
         <pre><span class="c"># install</span>
@@ -155,19 +148,93 @@ flaught review --base main</pre>
 
     <section id="pipeline">
       <h2><span class="num">01</span>Five stages, one skeptical pass</h2>
-      <div class="pipeline">
-        <span class="node first">Config</span><span class="arrow">&rarr;</span>
-        <span class="node">Context assembly</span><span class="arrow">&rarr;</span>
-        <span class="node">Deterministic tools</span><span class="arrow">&rarr;</span>
-        <span class="node">LLM adversarial pass</span><span class="arrow">&rarr;</span>
-        <span class="node">Test inversion</span><span class="arrow">&rarr;</span>
-        <span class="node">Scope-creep detection</span>
-      </div>
-      <div class="pipeline">
-        <span class="node gate">Noise budget</span><span class="arrow">&rarr;</span>
-        <span class="node gate">Severity gate</span><span class="arrow">&rarr;</span>
-        <span class="node gate">Exit code (0 / 1 / 2)</span>
-      </div>
+      <figure class="diagram">
+        <svg viewBox="0 0 740 446" role="img" aria-label="Flaught's pipeline: config and context assembly feed four finding-producing stages (deterministic tools, LLM adversarial pass, test inversion, scope-creep detection). Their findings pool together, tagged by source, then pass through a noise budget and a severity gate that decide exit 0 (clean) or exit 1 (gated). A fault anywhere in the pipeline (bad config, missing API key, LLM failure) skips both gates and exits 2 instead.">
+          <defs>
+            <marker id="pl-arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse">
+              <path d="M0,0 L10,5 L0,10 z" fill="var(--faint)"></path>
+            </marker>
+            <marker id="pl-arrow-accent" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse">
+              <path d="M0,0 L10,5 L0,10 z" fill="var(--accent)"></path>
+            </marker>
+          </defs>
+
+          <rect x="10" y="58" width="720" height="298" rx="10" fill="none" stroke="var(--accent)" stroke-width="1.3" stroke-dasharray="4 4" opacity="0.55"></rect>
+
+          <rect x="300" y="16" width="140" height="34" rx="8" fill="var(--surface-2)" stroke="var(--border)"></rect>
+          <text x="370" y="37" text-anchor="middle" font-size="12" fill="var(--text)">Config</text>
+          <line x1="370" y1="50" x2="370" y2="66" stroke="var(--faint)" stroke-width="1.4" marker-end="url(#pl-arrow)"></line>
+
+          <rect x="260" y="66" width="220" height="34" rx="8" fill="var(--surface-2)" stroke="var(--border)"></rect>
+          <text x="370" y="87" text-anchor="middle" font-size="12" fill="var(--text)">Context assembly</text>
+          <line x1="370" y1="100" x2="370" y2="118" stroke="var(--faint)" stroke-width="1.4"></line>
+
+          <line x1="102" y1="118" x2="636" y2="118" stroke="var(--faint)" stroke-width="1.4"></line>
+          <line x1="102" y1="118" x2="102" y2="130" stroke="var(--faint)" stroke-width="1.4" marker-end="url(#pl-arrow)"></line>
+          <line x1="280" y1="118" x2="280" y2="130" stroke="var(--faint)" stroke-width="1.4" marker-end="url(#pl-arrow)"></line>
+          <line x1="458" y1="118" x2="458" y2="130" stroke="var(--faint)" stroke-width="1.4" marker-end="url(#pl-arrow)"></line>
+          <line x1="636" y1="118" x2="636" y2="130" stroke="var(--faint)" stroke-width="1.4" marker-end="url(#pl-arrow)"></line>
+
+          <rect x="20" y="130" width="164" height="44" rx="8" fill="var(--surface-2)" stroke="var(--border)"></rect>
+          <text x="102" y="148" text-anchor="middle" font-size="12" fill="var(--text)">Deterministic tools</text>
+          <text x="102" y="163" text-anchor="middle" font-size="9.5" fill="var(--faint)">tag: deterministic</text>
+
+          <rect x="198" y="130" width="164" height="44" rx="8" fill="var(--surface-2)" stroke="var(--border)"></rect>
+          <text x="280" y="148" text-anchor="middle" font-size="12" fill="var(--text)">LLM adversarial pass</text>
+          <text x="280" y="163" text-anchor="middle" font-size="9.5" fill="var(--faint)">tag: llm</text>
+
+          <rect x="376" y="130" width="164" height="44" rx="8" fill="var(--surface-2)" stroke="var(--border)"></rect>
+          <text x="458" y="156" text-anchor="middle" font-size="12" fill="var(--text)">Test inversion</text>
+
+          <rect x="554" y="130" width="164" height="44" rx="8" fill="var(--surface-2)" stroke="var(--border)"></rect>
+          <text x="636" y="156" text-anchor="middle" font-size="12" fill="var(--text)">Scope-creep detection</text>
+
+          <line x1="102" y1="174" x2="102" y2="190" stroke="var(--faint)" stroke-width="1.4"></line>
+          <line x1="280" y1="174" x2="280" y2="190" stroke="var(--faint)" stroke-width="1.4"></line>
+          <line x1="458" y1="174" x2="458" y2="190" stroke="var(--faint)" stroke-width="1.4"></line>
+          <line x1="636" y1="174" x2="636" y2="190" stroke="var(--faint)" stroke-width="1.4"></line>
+          <line x1="102" y1="190" x2="636" y2="190" stroke="var(--faint)" stroke-width="1.4"></line>
+          <line x1="370" y1="190" x2="370" y2="208" stroke="var(--faint)" stroke-width="1.4" marker-end="url(#pl-arrow)"></line>
+
+          <rect x="270" y="208" width="200" height="40" rx="14" fill="var(--surface-2)" stroke="var(--border)"></rect>
+          <text x="370" y="224" text-anchor="middle" font-size="12" fill="var(--text)">Findings</text>
+          <text x="370" y="238" text-anchor="middle" font-size="9.5" fill="var(--faint)">merged, source-tagged</text>
+
+          <line x1="370" y1="248" x2="370" y2="264" stroke="var(--faint)" stroke-width="1.4" marker-end="url(#pl-arrow)"></line>
+          <text x="392" y="259" font-size="10" fill="var(--faint)" font-style="italic">caps volume</text>
+
+          <rect x="260" y="264" width="220" height="34" rx="8" fill="var(--surface-2)" stroke="var(--border)"></rect>
+          <text x="370" y="285" text-anchor="middle" font-size="12" fill="var(--text)">Noise budget</text>
+
+          <line x1="370" y1="298" x2="370" y2="314" stroke="var(--faint)" stroke-width="1.4" marker-end="url(#pl-arrow)"></line>
+          <text x="392" y="309" font-size="10" fill="var(--faint)" font-style="italic">checks threshold</text>
+
+          <rect x="260" y="314" width="220" height="34" rx="8" fill="var(--surface-2)" stroke="var(--border)" stroke-width="2.2"></rect>
+          <text x="370" y="335" text-anchor="middle" font-size="12" fill="var(--text)">Severity gate</text>
+
+          <polyline points="345,348 345,372 90,394" fill="none" stroke="var(--faint)" stroke-width="1.4" marker-end="url(#pl-arrow)"></polyline>
+          <text x="205" y="372" text-anchor="middle" font-size="10" fill="var(--faint)" font-style="italic">no findings &ge; gate</text>
+
+          <line x1="370" y1="348" x2="370" y2="394" stroke="var(--faint)" stroke-width="1.4" marker-end="url(#pl-arrow)"></line>
+          <text x="355" y="372" text-anchor="end" font-size="10" fill="var(--faint)" font-style="italic">findings &ge; gate</text>
+
+          <rect x="20" y="394" width="140" height="40" rx="8" fill="var(--surface-2)" stroke="var(--border)"></rect>
+          <text x="90" y="410" text-anchor="middle" font-size="12" fill="var(--text)">Exit 0</text>
+          <text x="90" y="424" text-anchor="middle" font-size="9.5" fill="var(--faint)">clean</text>
+
+          <rect x="300" y="394" width="140" height="40" rx="8" fill="var(--surface-2)" stroke="var(--border)"></rect>
+          <text x="370" y="410" text-anchor="middle" font-size="12" fill="var(--text)">Exit 1</text>
+          <text x="370" y="424" text-anchor="middle" font-size="9.5" fill="var(--faint)">gated</text>
+
+          <polyline points="430,348 430,372 650,394" fill="none" stroke="var(--accent)" stroke-width="1.4" stroke-dasharray="4 4" marker-end="url(#pl-arrow-accent)"></polyline>
+          <text x="540" y="368" text-anchor="middle" font-size="10" fill="var(--accent)" font-style="italic">on fault</text>
+
+          <rect x="580" y="394" width="140" height="40" rx="8" fill="var(--surface-2)" stroke="var(--accent)" stroke-dasharray="4 4"></rect>
+          <text x="650" y="410" text-anchor="middle" font-size="12" fill="var(--text)">Exit 2</text>
+          <text x="650" y="424" text-anchor="middle" font-size="9.5" fill="var(--accent)">error</text>
+        </svg>
+        <figcaption>Five stages produce findings tagged by source (deterministic tool vs. LLM), which pool together and pass through two gates (a noise budget that caps volume, then a severity check) to decide exit 0 (clean) or 1 (gated, blocks the PR). A fault anywhere in the pipeline (bad config, missing API key, LLM outage) skips both gates and exits 2 instead: a tool problem, not a verdict on the code.</figcaption>
+      </figure>
       <ul class="stages">
         <li>
           <div class="stage-name">Context assembly</div>
@@ -179,85 +246,66 @@ flaught review --base main</pre>
         </li>
         <li>
           <div class="stage-name">LLM adversarial pass <span class="tag">llm</span></div>
-          <div class="stage-desc">Structured skeptical review of security, architecture, scope-creep, and test quality &mdash; tagged <code>source_type: "llm"</code>, distinct from the tool findings.</div>
+          <div class="stage-desc">Structured skeptical review of security, architecture, scope-creep, and test quality, tagged <code>source_type: "llm"</code>, distinct from the tool findings.</div>
         </li>
         <li>
           <div class="stage-name">Test inversion</div>
-          <div class="stage-desc">Runs the test suite on pre-change code and flags tests that pass on both sides &mdash; cheap mutation testing that catches vacuous tests.</div>
+          <div class="stage-desc">Runs the test suite on pre-change code and flags tests that pass on both sides: cheap mutation testing that catches vacuous tests.</div>
         </li>
         <li>
           <div class="stage-name">Scope-creep detection</div>
           <div class="stage-desc">Heuristic plus LLM; flags hunks unrelated to the PR's stated intent.</div>
         </li>
       </ul>
-      <p style="color:var(--muted)">Output: a Markdown PR comment plus a <strong>versioned JSON artifact</strong> you can keep &mdash; one snapshot per run, for trend tracking.</p>
+      <p style="color:var(--muted)">Output: a Markdown PR comment plus a <strong>versioned JSON artifact</strong> you can keep (one snapshot per run, for trend tracking).</p>
     </section>
 
     <section id="demo">
       <h2><span class="num">02</span>See it work</h2>
       <figure>
         <img src="assets/flaught-demo.gif" alt="Animated terminal recording: flaught review runs against main on a deliberately flawed pull request and reports findings, then a peek at the JSON artifact.">
-        <figcaption>A deliberately flawed PR reviewed against <code>main</code>: a string-interpolated SQL query (critical, LLM-asserted), a scope-creep hunk in an unrelated file, and a vacuous test that passes on both sides of the change &mdash; caught by test inversion.</figcaption>
+        <figcaption>A deliberately flawed PR reviewed against <code>main</code>: a string-interpolated SQL query (critical, LLM-asserted), a scope-creep hunk in an unrelated file, and a vacuous test that passes on both sides of the change, caught by test inversion.</figcaption>
       </figure>
     </section>
 
     <section id="providers">
       <h2><span class="num">03</span>Review with a different model than the one that wrote the code</h2>
-      <p>Self-review is the weak spot in AI-assisted development. The model that wrote your PR is primed to defend it. Flaught breaks that correlation &mdash; swap reviewers with zero code change, just update <code>.advreview.yml</code>.</p>
+      <p>Self-review is the weak spot in AI-assisted development: the model that wrote your PR is primed to defend it. Point <code>.advreview.yml</code> at a different provider and Flaught breaks that correlation, zero code change.</p>
       <div class="providers">
         <div class="p"><div class="name">Groq <span class="default">default</span></div><div class="model">groq/compound-mini</div></div>
         <div class="p"><div class="name">OpenAI</div><div class="model">gpt-4o</div></div>
         <div class="p"><div class="name">Gemini</div><div class="model">gemini-1.5-pro</div></div>
-        <div class="p"><div class="name">Anthropic</div><div class="model">claude-sonnet-5</div></div>
         <div class="p"><div class="name">Ollama</div><div class="model">local + cloud</div></div>
       </div>
-      <p class="pairing">A sane pairing: code with Claude, review with GPT-4o or Groq. Code with Copilot or GPT, review with Claude. Code with anything, review with a different anything. Any OpenAI-compatible endpoint works via <code>base_url</code>; Anthropic has its own native adapter since its Messages API isn't OpenAI-shaped.</p>
+      <p class="pairing">A sane pairing: code with Claude, review with Groq or GPT-4o. Code with anything, review with a different anything. Any OpenAI-compatible endpoint works via <code>base_url</code>; Anthropic has its own native adapter too, best paired as the coder here, not the reviewer.</p>
     </section>
 
     <section id="compare">
       <h2><span class="num">04</span>How it compares</h2>
-      <p class="compare-lead">The honest version of this chart: Flaught isn't the only open-source, bring-your-own-model reviewer that runs in any CI &mdash; <strong>Open Code Review (Alibaba)</strong> and <strong>Qodo Merge / PR-Agent</strong> are too. The difference is what the review <em>does</em>. A tool that says &ldquo;here are issues&rdquo; is one thing; one that also asks &ldquo;are these issues real?&rdquo; &mdash; and whether your tests even test the change, and whether a hunk belongs in this PR &mdash; is another.</p>
-      <div class="compare-scroll">
+      <p class="compare-lead">Against the SaaS market leader and the closest open-source structural analog. The difference is what the review <em>does</em>: a tool that says &ldquo;here are issues&rdquo; is one thing; one that also asks &ldquo;are these issues real?&rdquo; (and whether your tests even test the change, and whether a hunk belongs in this PR) is another.</p>
       <table class="compare">
         <thead>
           <tr>
             <th></th>
             <th class="us">Flaught</th>
-            <th>Open Code Review<span class="sub">Alibaba · OCR</span></th>
             <th>CodeRabbit</th>
-            <th>Qodo&nbsp;Merge<span class="sub">PR-Agent</span></th>
-            <th>Greptile</th>
-            <th>Copilot<span class="sub">code review</span></th>
+            <th>Open Code Review<span class="sub">Alibaba · OCR</span></th>
           </tr>
         </thead>
         <tbody>
-          <tr><th>Open source, self-hostable</th><td class="y">✓</td><td class="y">✓</td><td class="n">✗</td><td class="y">✓</td><td class="n">✗</td><td class="n">✗</td></tr>
-          <tr><th>Bring-your-own LLM (incl. local)</th><td class="y">✓</td><td class="y">✓</td><td class="n">✗</td><td class="y">✓</td><td class="n">✗</td><td class="n">✗</td></tr>
-          <tr><th>Runs in any CI / shell</th><td class="y">✓</td><td class="y">✓</td><td class="p">~</td><td class="y">✓</td><td class="p">~</td><td class="p">~</td></tr>
-          <tr><th>Pricing / free for OSS</th><td class="price">Free (OSS)</td><td class="price">Free (OSS)</td><td class="price">Free OSS · ~$24/dev</td><td class="price">Free self-host · ~$19/dev</td><td class="price">Free OSS · $30/seat</td><td class="price">Free tier · $10–39/dev</td></tr>
-          <tr><th>Deterministic tools + LLM, provenance-tagged</th><td class="y">✓</td><td class="p">~<sup>1</sup></td><td class="p">~<sup>2</sup></td><td class="p">~<sup>3</sup></td><td class="n">✗</td><td class="n">✗</td></tr>
-          <tr><th>Adversarial refute / skeptic pass (cross-model)</th><td class="y">✓</td><td class="p">~<sup>4</sup></td><td class="n">✗</td><td class="n">✗</td><td class="n">✗</td><td class="n">✗</td></tr>
-          <tr><th>Test inversion (vacuous-test detection)</th><td class="y">✓</td><td class="n">✗</td><td class="n">✗</td><td class="n">✗<sup>5</sup></td><td class="n">✗</td><td class="n">✗</td></tr>
-          <tr><th>Scope-creep detection</th><td class="y">✓</td><td class="n">✗</td><td class="n">✗</td><td class="n">✗</td><td class="n">✗</td><td class="n">✗</td></tr>
-          <tr><th>Versioned JSON artifact + trends</th><td class="y">✓</td><td class="p">~<sup>6</sup></td><td class="p">~</td><td class="n">✗</td><td class="p">~</td><td class="n">✗</td></tr>
-          <tr><th>CI exit codes (tool fault &ne; code problem)</th><td class="y">✓</td><td class="p">~</td><td class="p">~</td><td class="p">~</td><td class="n">✗</td><td class="n">✗</td></tr>
-          <tr class="weak"><th>Published, validated benchmark</th><td class="n">✗<sup>8</sup></td><td class="y">✓</td><td class="y">✓</td><td class="y">✓</td><td class="y">✓</td><td class="p">~</td></tr>
-          <tr class="weak"><th>Whole-repo semantic index / cross-file context</th><td class="p">~<sup>7</sup></td><td class="y">✓</td><td class="p">~</td><td class="p">~</td><td class="y">✓</td><td class="p">~</td></tr>
-          <tr class="weak"><th>Auto-implements the fix (not just comments)</th><td class="n">✗<sup>8</sup></td><td class="p">~</td><td class="p">~</td><td class="p">~</td><td class="p">~</td><td class="y">✓</td></tr>
+          <tr><th>Open source, self-hostable</th><td class="y">✓</td><td class="n">✗</td><td class="y">✓</td></tr>
+          <tr><th>Bring-your-own LLM (incl. local)</th><td class="y">✓</td><td class="n">✗</td><td class="y">✓</td></tr>
+          <tr><th>Deterministic tools + LLM, provenance-tagged</th><td class="y">✓</td><td class="p">~<sup>1</sup></td><td class="p">~<sup>2</sup></td></tr>
+          <tr><th>Adversarial refute / skeptic pass (cross-model)</th><td class="y">✓</td><td class="n">✗</td><td class="p">~<sup>3</sup></td></tr>
+          <tr><th>Test inversion (vacuous-test detection)</th><td class="y">✓</td><td class="n">✗</td><td class="n">✗</td></tr>
+          <tr><th>Scope-creep detection</th><td class="y">✓</td><td class="n">✗</td><td class="n">✗</td></tr>
         </tbody>
       </table>
-      </div>
-      <p class="compare-key"><span class="y">✓</span> yes &nbsp; <span class="p">~</span> partial / varies &nbsp; <span class="n">✗</span> not a named feature &nbsp; <span class="price" style="font-family:var(--mono);font-size:11px">text</span> = pricing</p>
-      <p class="compare-note">Semgrep isn't a column &mdash; Flaught <em>runs</em> it (plus a linter and a vuln scanner) as a deterministic stage, so it's a building block, not a rival; the columns are AI code-review products. Best-effort, as of August 2026 &mdash; a snapshot, not a verdict. Tools move fast; if a cell is wrong, <a href="https://github.com/flaught/core/issues/new?labels=documentation">file an issue</a> and we'll fix it. The italic rows are where Flaught is behind, and they're <em>roadmap</em>, not a verdict on the design (see note 8).</p>
+      <p class="compare-key"><span class="y">✓</span> yes &nbsp; <span class="p">~</span> partial / varies &nbsp; <span class="n">✗</span> not a named feature</p>
       <ol class="compare-foot">
-        <li><sup>1</sup> OCR is a deterministic-<em>engineering</em> + agent hybrid; its deterministic layer is file selection, line positioning, and rule routing &mdash; not external tools (Semgrep/linter/vuln) with per-finding source tags.</li>
-        <li><sup>2</sup> CodeRabbit runs 40+ linters + SAST + LLM, but doesn't tag each finding's provenance.</li>
-        <li><sup>3</sup> Qodo is multi-agent + SAST, not provenance-tagged per finding.</li>
-        <li><sup>4</sup> OCR has a reflection module (same-pipeline self-check) &mdash; similar spirit, but not a <em>different model</em> refuting findings with anti-correlation.</li>
-        <li><sup>5</sup> Qodo auto-generates missing tests; that's distinct from detecting vacuous tests that pass on both sides of the change.</li>
-        <li><sup>6</sup> OCR has a Session Viewer + OpenTelemetry; CodeRabbit/Greptile have insights dashboards &mdash; not a versioned <em>findings</em> artifact you trend across runs.</li>
-        <li><sup>7</sup> Flaught reads a one-hop dependency neighborhood (blast radius), not a whole-repo semantic graph &mdash; cheaper, and less cross-file recall.</li>
-        <li><sup>8</sup> Flaught is a dogfooding open-source project; a published benchmark, a whole-repo semantic index, and auto-implementing fixes are on an evolving roadmap &mdash; these are &ldquo;not yet,&rdquo; not &ldquo;never.&rdquo;</li>
+        <li><sup>1</sup> CodeRabbit runs 40+ linters + SAST + LLM, but doesn't tag each finding's provenance.</li>
+        <li><sup>2</sup> OCR is a deterministic-<em>engineering</em> + agent hybrid; its deterministic layer is file selection, line positioning, and rule routing, not external tools (Semgrep/linter/vuln) with per-finding source tags.</li>
+        <li><sup>3</sup> OCR has a reflection module (same-pipeline self-check), similar spirit, but not a <em>different model</em> refuting findings with anti-correlation.</li>
       </ol>
     </section>
 
