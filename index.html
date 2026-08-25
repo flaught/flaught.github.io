@@ -256,7 +256,7 @@ flaught review --base main</pre>
         </li>
         <li>
           <div class="stage-name">Test inversion</div>
-          <div class="stage-desc">Runs the test suite on pre-change code and flags tests that pass on both sides: cheap mutation testing that catches vacuous tests.</div>
+          <div class="stage-desc">Runs the test suite on pre-change code and flags tests that pass identically on both sides &mdash; a before/after test-sensitivity check that catches vacuous tests the change didn't actually exercise.</div>
         </li>
         <li>
           <div class="stage-name">Scope-creep detection</div>
@@ -330,6 +330,7 @@ flaught review --base main</pre>
       <h2><span class="num">06</span>The honest caveat</h2>
       <div class="caveat">
         <p><span class="marker">&#9888;</span> The JSON artifact is evidence that <em>scrutiny occurred</em>, not evidence that findings are <em>correct</em>. LLM-asserted findings may include hallucinations. Deterministic-tool findings have their own false-positive rates. Treat this as a prompt for human review, not audit-truth.</p>
+        <p style="margin-top:14px">And honestly legible: every artifact carries an <code>analysis_completeness</code> field recording whether the LLM saw the whole change or only part of it &mdash; a large PR can truncate the prompt &mdash; so &ldquo;review completed&rdquo; is never mistaken for &ldquo;comprehensively reviewed.&rdquo; <a href="https://github.com/flaught/core/blob/main/docs/findings-schema.md#analysis-completeness">Field reference &rarr;</a></p>
       </div>
       <p style="color:var(--faint);margin-top:16px">Named for Monsignor Flaught, the devil's advocate in <em>A Canticle for Leibowitz</em>.</p>
     </section>
@@ -342,6 +343,7 @@ flaught review --base main</pre>
         <a href="https://github.com/flaught/core/blob/main/docs/prompt-templates.md">Prompt templates</a>
         <a href="https://github.com/flaught/core/blob/main/docs/api.md">API</a>
         <a href="https://github.com/flaught/core/blob/main/docs/findings-schema.md">Findings schema</a>
+        <a href="https://github.com/flaught/core/blob/main/docs/roadmap.md">Roadmap</a>
         <a href="https://github.com/flaught/core/releases/tag/v0.8.0">v0.8.0</a>
         <a href="https://www.npmjs.com/package/@flaught/core">npm</a>
       </div>
