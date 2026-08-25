@@ -59,6 +59,9 @@
     .install pre .c { color: var(--faint); }
     .hint { color: var(--faint); font-size: 14px; }
     .hint a { color: var(--muted); }
+    details.manual-install { margin-top: 20px; }
+    details.manual-install > summary { cursor: pointer; color: var(--faint); font-size: 14px; font-family: var(--mono); }
+    details.manual-install .install { margin-top: 10px; opacity: 0.9; }
     section { padding: 56px 0; border-bottom: 1px solid var(--border); }
     h2 { font-family: var(--serif); font-weight: bold; font-size: 28px; margin: 0 0 20px; }
     h2 .num { color: var(--accent); font-size: 18px; font-family: var(--mono); margin-right: 10px; vertical-align: 2px; }
@@ -141,15 +144,7 @@
       <p class="tagline">Your PR's designated skeptic.</p>
       <hr class="accent-bar">
       <p class="lead"><strong>The reviewer should not be the author.</strong> A model reviewing code it wrote itself tends to agree with its own choices. Same blind spots, same rationalizations. Flaught decouples the two: point it at any LLM, independent of whatever wrote the code, and get a genuinely adversarial second opinion instead of an echo.</p>
-      <div class="install">
-        <div class="head"><span>bash</span><button type="button" onclick="navigator.clipboard&amp;&amp;navigator.clipboard.writeText(&quot;npm install -g @flaught/core&quot;)">copy</button></div>
-        <pre><span class="c"># install</span>
-npm install -g @flaught/core
-<span class="c"># scaffold config + prompts, then review vs main</span>
-flaught init
-flaught review --base main</pre>
-      </div>
-      <p class="hint" style="margin-top:18px;margin-bottom:8px">Or hand it to your AI coding agent &mdash; paste this into Claude Code, Codex, Cursor, or pi:</p>
+      <p class="hint" style="margin-top:24px;margin-bottom:8px">Set it up with one paste &mdash; drop this into your AI coding agent (Claude Code, Codex, Cursor, or pi) and it will install Flaught, scaffold the config, and run a first deterministic review (no API key needed):</p>
       <div class="install">
         <div class="head"><span>prompt</span><button type="button" onclick="copyEl('flaught-quickstart',this)">copy</button></div>
         <pre id="flaught-quickstart">npm install -g @flaught/core, then run flaught init to scaffold the config, then flaught review --no-llm to run the deterministic checks (no API key needed). Fix anything it flags and re-run until clean.
@@ -157,6 +152,17 @@ flaught review --base main</pre>
 For the full LLM adversarial pass, set GROQ_API_KEY (or set llm.provider and llm.api_key_env in .advreview.yml for another provider) and drop --no-llm.</pre>
       </div>
       <p class="hint">Runs in GitHub Actions, GitLab CI, or any shell. No API key needed for the deterministic pass (<code>flaught review --no-llm</code>); set <code>GROQ_API_KEY</code> for the full LLM pass. <a href="https://github.com/flaught/core/blob/main/docs/configuration.md#llm-providers">Provider config &rarr;</a></p>
+      <details class="manual-install">
+        <summary>Prefer the manual shell? Install with npm.</summary>
+        <div class="install">
+          <div class="head"><span>bash</span><button type="button" onclick="navigator.clipboard&amp;&amp;navigator.clipboard.writeText(&quot;npm install -g @flaught/core&quot;)">copy</button></div>
+          <pre><span class="c"># install</span>
+npm install -g @flaught/core
+<span class="c"># scaffold config + prompts, then review vs main</span>
+flaught init
+flaught review --base main</pre>
+        </div>
+      </details>
     </header>
 
     <section id="pipeline">
