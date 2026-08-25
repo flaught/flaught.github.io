@@ -149,6 +149,13 @@ npm install -g @flaught/core
 flaught init
 flaught review --base main</pre>
       </div>
+      <p class="hint" style="margin-top:18px;margin-bottom:8px">Or hand it to your AI coding agent &mdash; paste this into Claude Code, Codex, Cursor, or pi:</p>
+      <div class="install">
+        <div class="head"><span>prompt</span><button type="button" onclick="copyEl('flaught-quickstart',this)">copy</button></div>
+        <pre id="flaught-quickstart">npm install -g @flaught/core, then run flaught init to scaffold the config, then flaught review --no-llm to run the deterministic checks (no API key needed). Fix anything it flags and re-run until clean.
+
+For the full LLM adversarial pass, set GROQ_API_KEY (or set llm.provider and llm.api_key_env in .advreview.yml for another provider) and drop --no-llm.</pre>
+      </div>
       <p class="hint">Runs in GitHub Actions, GitLab CI, or any shell. No API key needed for the deterministic pass (<code>flaught review --no-llm</code>); set <code>GROQ_API_KEY</code> for the full LLM pass. <a href="https://github.com/flaught/core/blob/main/docs/configuration.md#llm-providers">Provider config &rarr;</a></p>
     </header>
 
@@ -349,6 +356,17 @@ flaught review --base main</pre>
       </div>
       <p>MIT licensed. &middot; <span class="lit">advocatus diaboli</span></p>
     </footer>
+    <script>
+      function copyEl(id, btn) {
+        var t = document.getElementById(id);
+        if (!t || !navigator.clipboard) return;
+        navigator.clipboard.writeText(t.textContent.trim()).then(function () {
+          var prev = btn.textContent;
+          btn.textContent = 'copied';
+          setTimeout(function () { btn.textContent = prev; }, 1200);
+        });
+      }
+    </script>
   </div>
 </body>
 </html>
