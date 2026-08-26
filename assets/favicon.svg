@@ -1,6 +1,7 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100">
   <!-- full-bleed blueprint tile (opaque corners; GitHub masks to rounded square) -->
   <rect width="100" height="100" fill="#0e3450"/>
-  <!-- F monogram: a bold geometric F, centered with even padding -->
-  <path fill="#5ec3e8" d="M 30 24 H 71 V 38 H 45 V 47 H 61 V 59 H 45 V 76 H 30 Z"/>
+  <!-- F: same serif as the hero wordmark, centered, cyan -->
+  <text x="50" y="80" font-family="Georgia, 'Times New Roman', 'Iowan Old Style', serif"
+        font-size="76" font-weight="bold" fill="#5ec3e8" text-anchor="middle">F</text>
 </svg>
