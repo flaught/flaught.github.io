@@ -160,9 +160,9 @@
         <span class="badge">Bring your own LLM</span>
         <span class="badge">Drop-in for any pipeline</span>
       </div>
-      <p class="subhead">Your agent wrote the code, the tests, and the PR summary. Flaught is the independent, open-source check that slots into the pipeline you already have: no rewrite, no vendor lock-in, no required API key.</p>
+      <p class="subhead">An agent wrote the code, the tests, and the PR summary. Flaught is the independent, open-source check that slots into the pipeline you already have: no rewrite, no vendor lock-in.</p>
       <hr class="accent-bar">
-      <p class="lead"><strong>The reviewer should not be the author.</strong> In agentic development they usually are: the model that wrote your PR also reviews it, summarizes it, and declares it done: same blind spots, same rationalizations, same eagerness to ship. Flaught breaks the loop. Point it at any LLM, independent of whatever wrote the code, add deterministic tooling, and get a genuinely adversarial second opinion instead of an echo.</p>
+      <p class="lead"><strong>The reviewer should not be the author.</strong> In agentic development they usually are: the model that wrote your PR also reviews it, summarizes it, and declares it done: same blind spots, same rationalizations, same eagerness to ship. Flaught separates the two roles. Point it at any LLM, independent of whatever wrote the code, add deterministic tooling, and get an adversarial second opinion from a model with no stake in the original decisions.</p>
       <p class="hint" style="margin-top:24px;margin-bottom:8px">Set it up with one paste: drop this into your AI coding agent (Claude Code, Codex, Cursor, or pi):</p>
       <div class="install">
         <div class="head"><span>prompt</span><button type="button" onclick="copyEl('flaught-quickstart',this)">copy</button></div>
@@ -278,12 +278,12 @@ flaught review --base main</pre>
           <text x="650" y="410" text-anchor="middle" font-size="12" fill="var(--text)">Exit 2</text>
           <text x="650" y="424" text-anchor="middle" font-size="9.5" fill="var(--accent)">error</text>
         </svg>
-        <figcaption>Five stages produce findings tagged by source (deterministic tool vs. LLM), which pool together and pass through two gates (a noise budget that caps volume, then a severity check) to decide exit 0 (clean) or 1 (gated, blocks the PR). A fault anywhere in the pipeline (bad config, missing API key, LLM outage) skips both gates and exits 2 instead: a tool problem, not a verdict on the code.</figcaption>
+        <figcaption>Five stages produce findings tagged by source (deterministic tool vs. LLM), which pool together and pass through two gates (a noise budget that caps volume, then a severity check) to decide exit 0 (clean) or 1 (gated, blocks the PR). A fault anywhere in the pipeline (bad config, missing API key, LLM outage) skips both gates and exits 2 instead. That exit code means the tool failed; it says nothing about the code.</figcaption>
       </figure>
       <ul class="stages">
         <li>
           <div class="stage-name">Context assembly</div>
-          <div class="stage-desc">Diff, changed files, and a one-hop dependency neighborhood so findings carry blast radius, not just a line number.</div>
+          <div class="stage-desc">Diff, changed files, and a one-hop dependency neighborhood so findings carry blast radius alongside the line number.</div>
         </li>
         <li>
           <div class="stage-name">Deterministic tools <span class="tag">deterministic</span></div>
@@ -303,12 +303,13 @@ flaught review --base main</pre>
         </li>
       </ul>
       <p style="color:var(--muted)">Output: a Markdown PR comment plus a <strong>versioned JSON artifact</strong> you can keep (one snapshot per run, for trend tracking).</p>
+      <p class="hint">For the full pipeline, component map, and single-run sequence: <a href="https://github.com/flaught/core/blob/main/docs/architecture.md">Architecture reference &rarr;</a></p>
     </section>
 
     <section id="who" class="audience">
       <h2><span class="num">02</span>Who it's for</h2>
-      <p><strong>Solo founders and small teams shipping agent-written code.</strong> You're moving fast because the agent reviews its own work, which means nobody does. Flaught is the gate: it runs on every PR, stays quiet when things are clean, and pulls you in only when something needs human eyes. Two findings and ninety seconds of your attention, not a report.</p>
-      <p><strong>Engineers landing agent-authored changes in enterprise codebases.</strong> Your team is accountable for code no human wrote. Flaught's timestamped, versioned JSON artifact is the paper trail: independent scrutiny occurred, here's what it found, here's whether the model saw the whole change (<code>analysis_completeness</code>). Evidence for your reviewers today; evidence for your compliance regime tomorrow.</p>
+      <p><strong>Solo founders and small teams shipping agent-written code.</strong> You're moving fast because the agent reviews its own work, which means nobody does. Flaught runs on every PR, says nothing when things are clean, and surfaces something only when it needs human eyes: two findings, ninety seconds of your attention.</p>
+      <p><strong>Engineers landing agent-authored changes in enterprise codebases.</strong> Your team is accountable for code no human wrote. Flaught's timestamped, versioned JSON artifact is the audit record: independent scrutiny occurred, here's what it found, here's whether the model saw the whole change (<code>analysis_completeness</code>). Evidence for your reviewers today; evidence for your compliance regime tomorrow.</p>
       <p><strong>Open-source maintainers triaging AI-generated PRs.</strong> Drive-by agent PRs are rising and your review time isn't. Run Flaught first: scope-creep detection catches the unrelated hunks, test inversion catches the vacuous tests, and you spend your attention only on contributions that survive the skeptic.</p>
     </section>
 
@@ -322,14 +323,14 @@ flaught review --base main</pre>
 
     <section id="providers">
       <h2><span class="num">04</span>Review with a different model than the one that wrote the code</h2>
-      <p>Self-review is the weak spot in AI-assisted development: the model that wrote your PR is primed to defend it. Point <code>.advreview.yml</code> at a different provider and Flaught breaks that correlation, zero code change.</p>
+      <p>Self-review is the weak spot in AI-assisted development: the model that wrote your PR tends to agree with its own choices. Point <code>.advreview.yml</code> at a different provider and Flaught breaks that correlation, zero code change.</p>
       <div class="providers">
         <div class="p"><div class="name">Groq <span class="default">default</span></div><div class="model">groq/compound-mini</div></div>
         <div class="p"><div class="name">OpenAI</div><div class="model">gpt-4o</div></div>
         <div class="p"><div class="name">Gemini</div><div class="model">gemini-1.5-pro</div></div>
         <div class="p"><div class="name">Ollama</div><div class="model">local + cloud</div></div>
       </div>
-      <p class="pairing">A sane pairing: code with Claude, review with Groq or GPT-4o. Code with anything, review with a different anything. Any OpenAI-compatible endpoint works via <code>base_url</code>; Anthropic has its own native adapter too, best paired as the coder here, not the reviewer.</p>
+      <p class="pairing">A sane pairing: code with Claude, review with Groq or GPT-4o. Code with anything, review with a different anything. Any OpenAI-compatible endpoint works via <code>base_url</code>; Anthropic has its own native adapter too. It works best as the coder here; pair the review step with a different provider.</p>
     </section>
 
     <section id="extend">
@@ -376,7 +377,7 @@ flaught review --base main</pre>
     <section id="caveat">
       <h2><span class="num">07</span>The honest caveat</h2>
       <div class="caveat">
-        <p><span class="marker">&#9888;</span> The JSON artifact is evidence that <em>scrutiny occurred</em>, not evidence that findings are <em>correct</em>. LLM-asserted findings may include hallucinations. Deterministic-tool findings have their own false-positive rates. An adversarial reviewer that overclaims its own reliability would be the exact thing it exists to catch, so Flaught doesn't. When it flags something, look. When it's clean, that means the skeptic found nothing, not that nothing is there.</p>
+        <p><span class="marker">&#9888;</span> The JSON artifact is evidence that <em>scrutiny occurred</em>, not evidence that findings are <em>correct</em>. LLM-asserted findings may include hallucinations. Deterministic-tool findings have their own false-positive rates. An adversarial reviewer that overclaims its own reliability would be the exact thing it exists to catch, so Flaught doesn't. When it flags something, look. A clean run means the skeptic didn't find anything. It doesn't mean there's nothing to find.</p>
         <p style="margin-top:14px">And honestly legible: every artifact carries an <code>analysis_completeness</code> field recording whether the LLM saw the whole change or only part of it: a large PR can truncate the prompt, so &ldquo;review completed&rdquo; is never mistaken for &ldquo;comprehensively reviewed.&rdquo; <a href="https://github.com/flaught/core/blob/main/docs/findings-schema.md#analysis-completeness">Field reference &rarr;</a></p>
       </div>
       <p style="color:var(--faint);margin-top:16px">
@@ -390,6 +391,7 @@ flaught review --base main</pre>
       <div class="links">
         <a href="https://github.com/flaught/core">GitHub repo</a>
         <a href="https://github.com/flaught/core/tree/main/docs">Docs</a>
+        <a href="https://github.com/flaught/core/blob/main/docs/architecture.md">Architecture</a>
         <a href="https://github.com/flaught/core/blob/main/docs/configuration.md">Configuration</a>
         <a href="https://github.com/flaught/core/blob/main/docs/prompt-templates.md">Prompt templates</a>
         <a href="https://github.com/flaught/core/blob/main/docs/api.md">API</a>
