@@ -58,6 +58,28 @@
     .tagline { font-size: clamp(20px, 4vw, 28px); color: var(--muted); margin: 0 0 6px; }
     .hero-badges { display: flex; flex-wrap: wrap; gap: 8px; margin: 2px 0 18px; }
     .hero-badges .badge { font-family: var(--mono); font-size: 12px; color: var(--accent); border: 1px solid var(--accent); border-radius: 4px; padding: 3px 9px; }
+    header.hero .hero-badges .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      background: rgba(58, 130, 220, 0.18);
+      border: 1px solid rgba(95, 165, 235, 0.55);
+      box-shadow: 0 0 14px rgba(58, 130, 220, 0.2);
+      color: #eaf3ff;
+      font-weight: 500;
+      padding: 9px 16px;
+      border-radius: 7px;
+    }
+    header.hero .hero-badges .pill-icon {
+      width: 14px;
+      height: 14px;
+      flex-shrink: 0;
+      fill: none;
+      stroke: currentColor;
+      stroke-width: 2;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
     .subhead { font-size: 19px; color: var(--muted); margin: 0 0 24px; max-width: 60ch; }
     .accent-bar { width: 64px; height: 3px; background: var(--accent); margin: 0 0 28px; border: 0; }
     .lead { font-size: 19px; color: var(--text); max-width: 64ch; }
@@ -156,13 +178,13 @@
       <h1 class="title">Flaught</h1>
       <p class="tagline">The designated skeptic for your coding agent.</p>
       <div class="hero-badges">
-        <span class="badge">Free &amp; open source (MIT)</span>
-        <span class="badge">Bring your own LLM</span>
-        <span class="badge">Drop-in for any pipeline</span>
+        <span class="badge"><svg class="pill-icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 9.9-1"></path></svg>Free &amp; open source (MIT)</span>
+        <span class="badge"><svg class="pill-icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="5" width="14" height="14" rx="2"></rect><rect x="9" y="9" width="6" height="6"></rect></svg>Bring your own LLM, or local</span>
+        <span class="badge"><svg class="pill-icon" viewBox="0 0 24 24" aria-hidden="true"><line x1="6" y1="3" x2="6" y2="15"></line><circle cx="18" cy="6" r="3"></circle><circle cx="6" cy="18" r="3"></circle><path d="M18 9a9 9 0 0 1-9 9"></path></svg>Drop-in for any pipeline</span>
       </div>
-      <p class="subhead">An agent wrote the code, the tests, and the PR summary. Flaught is the independent, open-source check that slots into the pipeline you already have: no rewrite, no vendor lock-in.</p>
+      <p class="subhead">An agent wrote the code, the tests, and the PR summary. Flaught is an independent, open-source check that slots into the development pipeline you already use, with no vendor lock-in.</p>
       <hr class="accent-bar">
-      <p class="lead"><strong>The reviewer should not be the author.</strong> In agentic development, they usually are. The model that wrote your PR also reviews it, summarizes it, and declares it done. It has the same blind spots, the same rationalizations, and the same eagerness to ship. Flaught separates the two roles. Point it at a different LLM than the one that wrote the code, add deterministic tooling, and get an adversarial second opinion from a model with no stake in the original decisions.</p>
+      <p class="lead">In agentic development, the model that wrote your PR also reviews it, summarizes it, and declares it done. It has the same blind spots, the same rationalizations, and the same eagerness to ship, even with a dedicated reviewer agent. Flaught cleanly and clearly separates the two roles. Point Flaught at a different LLM (including one running entirely on your own hardware) than the one that wrote the code, add deterministic tooling, and get an adversarial second opinion from a model with no stake in the original decisions.</p>
       <p class="hint" style="margin-top:24px;margin-bottom:8px">Set it up with one paste: drop this into your AI coding agent (Claude Code, Codex, Cursor, or pi):</p>
       <div class="install">
         <div class="head"><span>prompt</span><button type="button" onclick="copyEl('flaught-quickstart',this)">copy</button></div>
