@@ -167,16 +167,29 @@
       <div class="install">
         <div class="head"><span>prompt</span><button type="button" onclick="copyEl('flaught-quickstart',this)">copy</button></div>
         <pre id="flaught-quickstart">Install Flaught (npm install -g @flaught/core), run flaught init to
-scaffold the config, then flaught review --no-llm for the deterministic
-checks (no API key needed). Fix anything you are confident is a real
-issue. For everything else, STOP and report the remaining findings to
-me verbatim. Do not run flaught dismiss. Dismissing findings is my
-call, not yours.
+scaffold config if there's no .advreview.yml yet, then run the
+adversarial loop below.
 
-For the full LLM adversarial pass, set GROQ_API_KEY (or configure
-llm.provider in .advreview.yml) and drop --no-llm.</pre>
+## The adversarial loop
+
+1. Run: flaught review --base main --output findings.json --quiet
+2. Read findings.json. Fix a finding only if you're genuinely confident
+   it's real and mechanical &mdash; a lint failure, a missing null check, an
+   obvious off-by-one. Leave anything involving auth, architecture, or
+   ambiguous intent alone.
+3. Re-run step 1. This is the check: if the underlying issue is still
+   there, Flaught will find it again, whether or not the code changed
+   shape.
+4. Repeat steps 2-3 at most twice more.
+
+Then STOP. Report every finding still open, verbatim. Do not run
+flaught dismiss &mdash; dismissing a finding without fixing it is a human
+decision, no matter how many passes this took.
+
+No API key needed for the deterministic pass. For the full LLM pass, set
+GROQ_API_KEY (or configure llm.provider in .advreview.yml).</pre>
       </div>
-      <p class="hint">Note what this prompt doesn't say: &ldquo;re-run until clean.&rdquo; A skeptic the author can dismiss isn't a skeptic. Dismissals (<code>flaught dismiss</code>) are your tool for suppressing false positives, never the agent's tool for getting to green.</p>
+      <p class="hint">Note what this prompt doesn't say: &ldquo;re-run until clean&rdquo; with no limit. A skeptic the author can dismiss isn't a skeptic. Dismissals (<code>flaught dismiss</code>) are your tool for suppressing false positives, never the agent's tool for getting to green.</p>
       <p class="hint">Runs in GitHub Actions, GitLab CI, or any shell. No API key needed for the deterministic pass (<code>flaught review --no-llm</code>); set <code>GROQ_API_KEY</code> for the full LLM pass. <a href="https://github.com/flaught/core/blob/main/docs/configuration.md#llm-providers">Provider config &rarr;</a></p>
       <details class="manual-install">
         <summary>Prefer the manual shell? Install with npm.</summary>
@@ -191,8 +204,15 @@ flaught review --base main</pre>
       </details>
     </header>
 
+    <section id="who" class="audience">
+      <h2><span class="num">01</span>Who it's for</h2>
+      <p><strong>Solo founders and small teams shipping agent-written code.</strong> You're moving fast because the agent reviews its own work, which means nobody does. Flaught runs on every PR, says nothing when things are clean, and surfaces something only when it needs human eyes: two findings, ninety seconds of your attention.</p>
+      <p><strong>Engineers landing agent-authored changes in enterprise codebases.</strong> Your team is accountable for code no human wrote. Flaught's timestamped, versioned JSON artifact is the audit record: independent scrutiny occurred, here's what it found, here's whether the model saw the whole change (<code>analysis_completeness</code>). Evidence for your reviewers today; evidence for your compliance regime tomorrow.</p>
+      <p><strong>Open-source maintainers triaging AI-generated PRs.</strong> Drive-by agent PRs are rising and your review time isn't. Run Flaught first: scope-creep detection catches the unrelated hunks, test inversion catches the vacuous tests, and you spend your attention only on contributions that survive the skeptic.</p>
+    </section>
+
     <section id="pipeline">
-      <h2><span class="num">01</span>Five stages, one skeptical pass</h2>
+      <h2><span class="num">02</span>Five stages, one skeptical pass</h2>
       <figure class="diagram">
         <svg viewBox="0 0 740 446" role="img" aria-label="Flaught's pipeline: config and context assembly feed four finding-producing stages (deterministic tools, LLM adversarial pass, test inversion, scope-creep detection). Their findings pool together, tagged by source, then pass through a noise budget and a severity gate that decide exit 0 (clean) or exit 1 (gated). A fault anywhere in the pipeline (bad config, missing API key, LLM failure) skips both gates and exits 2 instead.">
           <defs>
@@ -306,19 +326,16 @@ flaught review --base main</pre>
       <p class="hint">For the full pipeline, component map, and single-run sequence: <a href="https://github.com/flaught/core/blob/main/docs/architecture.md">Architecture reference &rarr;</a></p>
     </section>
 
-    <section id="who" class="audience">
-      <h2><span class="num">02</span>Who it's for</h2>
-      <p><strong>Solo founders and small teams shipping agent-written code.</strong> You're moving fast because the agent reviews its own work, which means nobody does. Flaught runs on every PR, says nothing when things are clean, and surfaces something only when it needs human eyes: two findings, ninety seconds of your attention.</p>
-      <p><strong>Engineers landing agent-authored changes in enterprise codebases.</strong> Your team is accountable for code no human wrote. Flaught's timestamped, versioned JSON artifact is the audit record: independent scrutiny occurred, here's what it found, here's whether the model saw the whole change (<code>analysis_completeness</code>). Evidence for your reviewers today; evidence for your compliance regime tomorrow.</p>
-      <p><strong>Open-source maintainers triaging AI-generated PRs.</strong> Drive-by agent PRs are rising and your review time isn't. Run Flaught first: scope-creep detection catches the unrelated hunks, test inversion catches the vacuous tests, and you spend your attention only on contributions that survive the skeptic.</p>
-    </section>
-
-    <section id="demo">
-      <h2><span class="num">03</span>See it work</h2>
-      <figure>
-        <img src="assets/flaught-demo.gif" alt="Animated terminal recording: flaught review runs against main on a deliberately flawed pull request and reports findings, then a peek at the JSON artifact.">
-        <figcaption>A deliberately flawed <strong>agent-authored</strong> PR reviewed against <code>main</code>. Three textbook agent failure modes: a string-interpolated SQL query (critical, LLM-asserted), a scope-creep hunk in an unrelated file, and a vacuous test that passes on both sides of the change, caught by test inversion.</figcaption>
+    <section id="loop">
+      <h2><span class="num">03</span>The adversarial loop</h2>
+      <p>Flaught always reports what it finds &mdash; that part is fixed, not configurable. What happens next is up to you.</p>
+      <p>Route a finding to a human, or describe a loop to your coding agent: let it attempt the mechanical fixes itself, then check the result by simply running Flaught again. Re-running is the check. Flaught re-scans from scratch every time, so a fix that didn't actually work shows up again on the next pass &mdash; no special tracking required, just the same skeptical pass, repeated.</p>
+      <p>Dismissing a finding without fixing it always requires a human, no matter how you've set up the loop.</p>
+      <figure class="diagram">
+        <img src="assets/flaught-resolution-flow.svg" alt="Diagram: a finding is always reported and the dashboard always updates. Resolution routing to a human or the agent is a policy choice. If routed to the agent, Flaught re-verifies the fix against the diff before marking it resolved, and escalates to a human if the fix doesn't hold up. If routed to a human, the human's fix is trusted directly. Dismissing a finding without fixing it always requires a human, regardless of path." style="width:100%;max-width:680px;margin:0 auto;display:block;">
       </figure>
+      <p class="hint" style="margin-top:24px">This is the loop in the quick-start prompt above &mdash; paste it once and it covers both the install and the loop. If you want just the loop part on its own, for an existing agent config or a <code>CLAUDE.md</code>, copy steps 1 through 4 out of that same block; nothing about it changes outside the install line.</p>
+      <p class="hint">Once this is working locally, the same review becomes a merge gate in CI. GitHub Actions has three tested workflow patterns including fork-PR handling &mdash; see the <a href="https://github.com/flaught/core/blob/main/docs/github-actions.md">guide below</a>. GitLab CI support is early and undocumented; <a href="https://github.com/flaught/core/issues/29">issue #29</a> is open if you want to help close it.</p>
     </section>
 
     <section id="providers">
@@ -347,32 +364,74 @@ flaught review --base main</pre>
     <section id="compare">
       <h2><span class="num">06</span>How it compares</h2>
       <p class="compare-lead">Existing review tools were built to check human-written code. Flaught's category is agent-authored code: where the characteristic failures are vacuous tests, scope drift, and confident self-approval, and where the reviewer's independence from the author is the whole point.</p>
-      <table class="compare">
+      <div class="hero-badges" style="margin:4px 0 24px;">
+        <span class="badge">100% open source. MIT licensed. Self-hosted. Fork it.</span>
+        <span class="badge">Any LLM, including fully local: Claude, GPT, Gemini, Groq, or Ollama with zero API cost.</span>
+        <span class="badge">$0 license fee. Pay only for the LLM calls you choose to make.</span>
+      </div>
+      <div style="position:relative;width:100%;max-width:600px;height:320px;margin:0 auto;">
+        <canvas id="flaughtRadar" role="img" aria-label="Radar chart comparing Flaught against CodeRabbit, Open Code Review, and Gitar plus SonarQube across five dimensions: open source, bring your own model, deterministic checks, antagonistic double check, and CI or CD integration. Flaught scores full on all five. CodeRabbit is closed and lacks BYOM and antagonistic checking. Open Code Review is open but partial on deterministic and antagonistic checking. Gitar plus SonarQube has strong deterministic checks and CI integration but is only partially open and has no antagonistic check.">Flaught scores full on all five dimensions. Competitors have gaps in openness, model choice, or antagonistic checking.</canvas>
+      </div>
+      <div style="display:flex;flex-wrap:wrap;gap:14px;justify-content:center;margin-top:8px;font-size:12px;color:var(--muted);">
+        <span style="display:flex;align-items:center;gap:5px;"><span style="width:14px;height:3px;background:#5ec3e8;display:inline-block;"></span>Flaught</span>
+        <span style="display:flex;align-items:center;gap:5px;"><span style="width:14px;height:2px;background:#e08a4f;display:inline-block;"></span>CodeRabbit</span>
+        <span style="display:flex;align-items:center;gap:5px;"><span style="width:14px;height:2px;background:repeating-linear-gradient(to right,#6fbf8e 0 6px,transparent 6px 9px);display:inline-block;"></span>Open Code Review</span>
+        <span style="display:flex;align-items:center;gap:5px;"><span style="width:14px;height:2px;background:repeating-linear-gradient(to right,#d9b25a 0 1px,transparent 1px 4px);display:inline-block;"></span>Gitar + SonarQube</span>
+      </div>
+      <table class="compare" style="margin-top:28px;">
         <thead>
           <tr>
             <th></th>
             <th class="us">Flaught</th>
             <th>CodeRabbit</th>
             <th>Open Code Review<span class="sub">Alibaba · OCR</span></th>
+            <th>Gitar + SonarQube</th>
           </tr>
         </thead>
         <tbody>
-          <tr><th>Built for agent-authored changes</th><td class="y">✓</td><td class="n">✗</td><td class="n">✗</td></tr>
-          <tr><th>Open source, self-hostable</th><td class="y">✓</td><td class="n">✗</td><td class="y">✓</td></tr>
-          <tr><th>Bring-your-own LLM (incl. local)</th><td class="y">✓</td><td class="n">✗</td><td class="y">✓</td></tr>
-          <tr><th>Deterministic tools + LLM, provenance-tagged</th><td class="y">✓</td><td class="p">~<sup>1</sup></td><td class="p">~<sup>2</sup></td></tr>
-          <tr><th>Adversarial refute / skeptic pass (cross-model)</th><td class="y">✓</td><td class="n">✗</td><td class="p">~<sup>3</sup></td></tr>
-          <tr><th>Test inversion (vacuous-test detection)</th><td class="y">✓</td><td class="n">✗</td><td class="n">✗</td></tr>
-          <tr><th>Scope-creep detection</th><td class="y">✓</td><td class="n">✗</td><td class="n">✗</td></tr>
+          <tr><th>Built for agent-authored changes</th><td class="y">✓</td><td class="n">✗</td><td class="n">✗</td><td class="y">✓</td></tr>
+          <tr><th>Open source, self-hostable</th><td class="y">✓</td><td class="n">✗</td><td class="y">✓</td><td class="n">✗</td></tr>
+          <tr><th>Bring-your-own LLM (incl. local)</th><td class="y">✓</td><td class="n">✗</td><td class="y">✓</td><td class="n">✗</td></tr>
+          <tr><th>Free, no seat license</th><td class="y">✓</td><td class="n">✗</td><td class="y">✓</td><td class="n">✗</td></tr>
+          <tr><th>Deterministic tools + LLM, provenance-tagged</th><td class="y">✓</td><td class="n">✗</td><td class="n">✗</td><td class="y">✓</td></tr>
+          <tr><th>Adversarial refute / skeptic pass (cross-model)</th><td class="y">✓</td><td class="n">✗</td><td class="n">✗</td><td class="n">✗</td></tr>
+          <tr><th>Test inversion (vacuous-test detection)</th><td class="y">✓</td><td class="n">✗</td><td class="n">✗</td><td class="n">✗</td></tr>
+          <tr><th>Scope-creep detection</th><td class="y">✓</td><td class="n">✗</td><td class="n">✗</td><td class="n">✗</td></tr>
         </tbody>
       </table>
-      <p class="compare-key"><span class="y">✓</span> yes &nbsp; <span class="p">~</span> partial / varies &nbsp; <span class="n">✗</span> not a named feature</p>
-      <ol class="compare-foot">
-        <li><sup>1</sup> CodeRabbit runs 40+ linters + SAST + LLM, but doesn't tag each finding's provenance.</li>
-        <li><sup>2</sup> OCR is a deterministic-<em>engineering</em> + agent hybrid; its deterministic layer is file selection, line positioning, and rule routing, not external tools (Semgrep/linter/vuln) with per-finding source tags.</li>
-        <li><sup>3</sup> OCR has a reflection module (same-pipeline self-check), similar spirit, but not a <em>different model</em> refuting findings with anti-correlation.</li>
-      </ol>
+      <p class="compare-key"><span class="y">✓</span> yes &nbsp; <span class="n">✗</span> not a named feature</p>
+      <p class="compare-note">CodeRabbit combines 40-plus linters and SAST tools with AI review, but doesn't tag each finding by the source it came from. Open Code Review's deterministic layer handles file selection, comment positioning, and rule routing rather than running external tools like Semgrep with per-finding provenance tags, and its reflection module improves comment accuracy within a single pipeline rather than having a second, independent model check the first. SonarQube's free Community Build is open source but doesn't review pull requests at all &mdash; that capability only exists in Gitar or a paid SonarQube edition, and neither of those is open source. Gitar lets you bring your own Anthropic key, but not a local model, and your code is still sent to Gitar's servers either way.</p>
+      <p class="compare-note" style="margin-top:14px">The same rigor extends to how Flaught runs in CI. Fork PRs are handled with a two-workflow security pattern that keeps the LLM provider's API key out of reach of a malicious fork &mdash; the model never sees the secret, only the diff, so prompt injection can't exfiltrate it. And Flaught reviews its own pull requests: this repo dogfoods itself in production, not just in a demo.</p>
     </section>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+    <script>
+      (function () {
+        var css = getComputedStyle(document.documentElement);
+        var muted = css.getPropertyValue('--muted').trim() || '#a5c5e3';
+        var border = css.getPropertyValue('--border').trim() || '#2a5d83';
+        var accent = css.getPropertyValue('--accent').trim() || '#5ec3e8';
+        new Chart(document.getElementById('flaughtRadar'), {
+          type: 'radar',
+          data: {
+            labels: ['Open source', 'Any LLM (BYOM)', 'Deterministic checks', 'Antagonistic check', 'CI/CD native'],
+            datasets: [
+              { label: 'Flaught', data: [3,3,3,3,3], borderColor: accent, backgroundColor: 'rgba(94,195,232,0.22)', borderWidth: 2.5, pointRadius: 3, pointBackgroundColor: accent },
+              { label: 'CodeRabbit', data: [0,0,1.5,0,3], borderColor: '#e08a4f', backgroundColor: 'transparent', borderWidth: 2, pointRadius: 0 },
+              { label: 'Open Code Review', data: [3,3,1.5,1.5,2], borderColor: '#6fbf8e', backgroundColor: 'transparent', borderWidth: 2, borderDash: [5,3], pointRadius: 0 },
+              { label: 'Gitar + SonarQube', data: [1.5,1.5,3,0,3], borderColor: '#d9b25a', backgroundColor: 'transparent', borderWidth: 2, borderDash: [1,3], pointRadius: 0 }
+            ]
+          },
+          options: {
+            responsive: true, maintainAspectRatio: false,
+            scales: { r: { min: 0, max: 3, ticks: { display: false }, grid: { color: border }, angleLines: { color: border }, pointLabels: { font: { size: 11 }, color: muted } } },
+            plugins: {
+              legend: { display: false },
+              tooltip: { callbacks: { label: function (c) { var v = c.parsed.r; var t = v >= 3 ? 'Full' : v >= 1.5 ? 'Partial' : 'None'; return c.dataset.label + ': ' + t; } } }
+            }
+          }
+        });
+      })();
+    </script>
 
     <section id="caveat">
       <h2><span class="num">07</span>The honest caveat</h2>
@@ -393,6 +452,7 @@ flaught review --base main</pre>
         <a href="https://github.com/flaught/core/tree/main/docs">Docs</a>
         <a href="https://github.com/flaught/core/blob/main/docs/architecture.md">Architecture</a>
         <a href="https://github.com/flaught/core/blob/main/docs/configuration.md">Configuration</a>
+        <a href="https://github.com/flaught/core/blob/main/docs/github-actions.md">GitHub Actions</a>
         <a href="https://github.com/flaught/core/blob/main/docs/prompt-templates.md">Prompt templates</a>
         <a href="https://github.com/flaught/core/blob/main/docs/api.md">API</a>
         <a href="https://github.com/flaught/core/blob/main/docs/findings-schema.md">Findings schema</a>
