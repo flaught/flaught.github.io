@@ -3,9 +3,9 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Flaught: the designated skeptic for your coding agent.</title>
+  <title>Flaught: independent review for agentic development.</title>
   <meta name="description" content="Free, open-source (MIT), bring-your-own-model adversarial code review that drops into any agentic dev pipeline: CI, GitHub Actions, or a coding agent's own workflow. A different model, a skeptical prompt, and deterministic tools; the reviewer is never the author.">
-  <meta property="og:title" content="Flaught: the designated skeptic for your coding agent.">
+  <meta property="og:title" content="Flaught: independent review for agentic development.">
   <meta property="og:description" content="FOSS, bring-your-own-LLM adversarial review that drops into any agentic dev pipeline. The reviewer is not the author.">
   <meta property="og:image" content="https://flaught.github.io/assets/social-preview.png">
   <meta property="og:type" content="website">
@@ -176,15 +176,15 @@
 
     <header class="hero">
       <h1 class="title">Flaught</h1>
-      <p class="tagline">The designated skeptic for your coding agent.</p>
+      <p class="tagline">Independent review for agentic development.</p>
       <div class="hero-badges">
         <span class="badge"><svg class="pill-icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 9.9-1"></path></svg>Free &amp; open source (MIT)</span>
         <span class="badge"><svg class="pill-icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="5" width="14" height="14" rx="2"></rect><rect x="9" y="9" width="6" height="6"></rect></svg>Bring your own LLM, or local</span>
         <span class="badge"><svg class="pill-icon" viewBox="0 0 24 24" aria-hidden="true"><line x1="6" y1="3" x2="6" y2="15"></line><circle cx="18" cy="6" r="3"></circle><circle cx="6" cy="18" r="3"></circle><path d="M18 9a9 9 0 0 1-9 9"></path></svg>Drop-in for any pipeline</span>
       </div>
-      <p class="subhead">An agent wrote the code, the tests, and the PR summary. Flaught is an independent, open-source check that slots into the development pipeline you already use, with no vendor lock-in.</p>
+      <p class="subhead">Flaught reviews AI-assisted code with deterministic tools and a separate LLM reviewer.</p>
       <hr class="accent-bar">
-      <p class="lead">In agentic development, the model that wrote your PR also reviews it, summarizes it, and declares it done. It has the same blind spots, the same rationalizations, and the same eagerness to ship, even with a dedicated reviewer agent. Flaught cleanly and clearly separates the two roles. Point Flaught at a different LLM (including one running entirely on your own hardware) than the one that wrote the code, add deterministic tooling, and get an adversarial second opinion from a model with no stake in the original decisions.</p>
+      <p class="lead">It helps catch defects, weak tests, security issues, and unintended changes before they reach production. <strong>Run it in CI, from the command line, or inside an agentic development loop.</strong></p>
       <p class="hint" style="margin-top:24px;margin-bottom:8px">Set it up with one paste: drop this into your AI coding agent (Claude Code, Codex, Cursor, or pi):</p>
       <div class="install">
         <div class="head"><span>prompt</span><button type="button" onclick="copyEl('flaught-quickstart',this)">copy</button></div>
@@ -348,8 +348,17 @@ flaught review --base main</pre>
       <p class="hint">For the full pipeline, component map, and single-run sequence: <a href="https://github.com/flaught/core/blob/main/docs/architecture.md">Architecture reference &rarr;</a></p>
     </section>
 
+    <section id="cost">
+      <h2><span class="num">03</span>Review does not have to be expensive</h2>
+      <p>Deterministic checks can run without any LLM inference.</p>
+      <p>For model-based review, Flaught can use a lower-cost hosted model, a local model through Ollama, or a more capable model when the change warrants it.</p>
+      <p>The coding model and the reviewing model do not need to be the same.</p>
+      <p>That lets teams add independent review without paying frontier-model prices for every pass.</p>
+      <p>Every run records its token usage &mdash; review and refute passes separately &mdash; in the findings artifact and the PR comment, so you can see what each pass actually consumed and apply your own pricing.</p>
+    </section>
+
     <section id="loop">
-      <h2><span class="num">03</span>The adversarial loop</h2>
+      <h2><span class="num">04</span>The adversarial loop</h2>
       <p>Flaught always reports what it finds &mdash; that part is fixed, not configurable. What happens next is up to you.</p>
       <p>Route a finding to a human, or describe a loop to your coding agent: let it attempt the mechanical fixes itself, then check the result by simply running Flaught again. Re-running is the check. Flaught re-scans from scratch every time, so a fix that didn't actually work shows up again on the next pass &mdash; no special tracking required, just the same skeptical pass, repeated.</p>
       <p>Dismissing a finding without fixing it always requires a human, no matter how you've set up the loop.</p>
@@ -361,7 +370,7 @@ flaught review --base main</pre>
     </section>
 
     <section id="providers">
-      <h2><span class="num">04</span>Review with a different model than the one that wrote the code</h2>
+      <h2><span class="num">05</span>Review with a different model than the one that wrote the code</h2>
       <p>Self-review is the weak spot in AI-assisted development: the model that wrote your PR tends to agree with its own choices. Point <code>.advreview.yml</code> at a different provider and Flaught breaks that correlation, zero code change.</p>
       <div class="providers">
         <div class="p"><div class="name">Groq <span class="default">default</span></div><div class="model">groq/compound-mini</div></div>
@@ -373,7 +382,7 @@ flaught review --base main</pre>
     </section>
 
     <section id="extend">
-      <h2><span class="num">05</span>Extend it without forking it</h2>
+      <h2><span class="num">06</span>Extend it without forking it</h2>
       <p>The defaults are a starting point. Three surfaces let you reshape the review without touching Flaught's source: the prompt, the config, and the library API.</p>
       <div class="extend">
         <div class="x"><div class="x-name">Prompt</div><div class="x-tag">.flaught-prompt/</div><div class="x-desc">Override any section (categories, severities, posture) or append team-specific rules on top of the defaults.</div></div>
@@ -384,7 +393,7 @@ flaught review --base main</pre>
     </section>
 
     <section id="compare">
-      <h2><span class="num">06</span>How it compares</h2>
+      <h2><span class="num">07</span>How it compares</h2>
       <p class="compare-lead">Existing review tools were built to check human-written code. Flaught's category is agent-authored code: where the characteristic failures are vacuous tests, scope drift, and confident self-approval, and where the reviewer's independence from the author is the whole point.</p>
       <div class="hero-badges" style="margin:4px 0 24px;">
         <span class="badge">100% open source. MIT licensed. Self-hosted. Fork it.</span>
@@ -456,7 +465,7 @@ flaught review --base main</pre>
     </script>
 
     <section id="caveat">
-      <h2><span class="num">07</span>The honest caveat</h2>
+      <h2><span class="num">08</span>The honest caveat</h2>
       <div class="caveat">
         <p><span class="marker">&#9888;</span> The JSON artifact is evidence that <em>scrutiny occurred</em>, not evidence that findings are <em>correct</em>. LLM-asserted findings may include hallucinations. Deterministic-tool findings have their own false-positive rates. An adversarial reviewer that overclaims its own reliability would be the exact thing it exists to catch, so Flaught doesn't. When it flags something, look. A clean run means the skeptic didn't find anything. It doesn't mean there's nothing to find.</p>
         <p style="margin-top:14px">And honestly legible: every artifact carries an <code>analysis_completeness</code> field recording whether the LLM saw the whole change or only part of it: a large PR can truncate the prompt, so &ldquo;review completed&rdquo; is never mistaken for &ldquo;comprehensively reviewed.&rdquo; <a href="https://github.com/flaught/core/blob/main/docs/findings-schema.md#analysis-completeness">Field reference &rarr;</a></p>
