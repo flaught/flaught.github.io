@@ -189,29 +189,19 @@
       <div class="install">
         <div class="head"><span>prompt</span><button type="button" onclick="copyEl('flaught-quickstart',this)">copy</button></div>
         <pre id="flaught-quickstart">Install Flaught (npm install -g @flaught/core), run flaught init to
-scaffold config if there's no .advreview.yml yet, then run the
-adversarial loop below.
+scaffold config if there's no .advreview.yml yet, then run:
 
-## The adversarial loop
+flaught review --base main --output findings.json --quiet
 
-1. Run: flaught review --base main --output findings.json --quiet
-2. Read findings.json. Fix a finding only if you're genuinely confident
-   it's real and mechanical &mdash; a lint failure, a missing null check, an
-   obvious off-by-one. Leave anything involving auth, architecture, or
-   ambiguous intent alone.
-3. Re-run step 1. This is the check: if the underlying issue is still
-   there, Flaught will find it again, whether or not the code changed
-   shape.
-4. Repeat steps 2-3 at most twice more.
-
-Then STOP. Report every finding still open, verbatim. Do not run
-flaught dismiss &mdash; dismissing a finding without fixing it is a human
-decision, no matter how many passes this took.
+When Flaught reports findings:
+- Fix findings you're confident are real.
+- Report the rest verbatim.
+- Never dismiss a finding; dismissal is a human action.
 
 No API key needed for the deterministic pass. For the full LLM pass, set
 GROQ_API_KEY (or configure llm.provider in .advreview.yml).</pre>
       </div>
-      <p class="hint">Note what this prompt doesn't say: &ldquo;re-run until clean&rdquo; with no limit. A skeptic the author can dismiss isn't a skeptic. Dismissals (<code>flaught dismiss</code>) are your tool for suppressing false positives, never the agent's tool for getting to green.</p>
+      <p class="hint">A skeptic the author can dismiss isn't a skeptic. Dismissals (<code>flaught dismiss</code>) are a human tool for suppressing false positives, never the agent's tool for getting to green.</p>
       <p class="hint">Runs in GitHub Actions, GitLab CI, or any shell. No API key needed for the deterministic pass (<code>flaught review --no-llm</code>); set <code>GROQ_API_KEY</code> for the full LLM pass. <a href="https://github.com/flaught/core/blob/main/docs/configuration.md#llm-providers">Provider config &rarr;</a></p>
       <details class="manual-install">
         <summary>Prefer the manual shell? Install with npm.</summary>
